@@ -19,6 +19,7 @@ package tech.redroma.lexis.service;
 import com.google.common.base.Strings;
 import com.google.gson.JsonObject;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +75,7 @@ public final class Server
         Spark.get("/search/starting-with/:searchTerm", this::getAllWordsStartingWith);
         Spark.get("/search/containing/:searchTerm", this::getAllWordsContaining);
         Spark.get("/search/containing-in-definition/:searchTerm", this::getAllWordsContainingInDefinition);
+        Spark.get("/search/any-word", this::getAnyWord);
     }
 
     Object getAllWords(Request request, Response response)
@@ -213,6 +215,44 @@ public final class Server
             .send();
 
         return results;
+    }
+    
+    Object getAnyWord(Request request, Response response)
+    {
+        long start = System.currentTimeMillis();
+        String ip = request.ip();
+        LOG.info("Received request to get any word from {}", ip);
+        
+        AROMA.begin().titled("Received Request")
+            .text("To get any word from IP [{}]", ip)
+            .withUrgency(Urgency.LOW)
+            .send();
+        
+        response.status(200);
+        response.type(APPLICATION_JSON);
+        
+        Optional<LexisWord> any = Words.WORDS.stream().findAny();
+        
+        if (!any.isPresent())
+        {
+            LOG.error("Failed to load any word.");
+            AROMA.begin().titled("Operation Failed")
+                .text("Could not load any word")
+                .send();
+            
+            return null;
+        }
+        
+        JsonObject word = any.get().asJSON();
+        long latency = System.currentTimeMillis() - start;
+
+        LOG.debug("Operation to load any word turned up {} and took {}ms", word, latency);
+        AROMA.begin().titled("Operation Completed")
+            .text("Operation to load any word turned up {} and took {}ms", word, latency)
+            .withUrgency(Urgency.LOW)
+            .send();
+        
+        return  word;
     }
 
     private Response missingSearchTerm(Response response)
