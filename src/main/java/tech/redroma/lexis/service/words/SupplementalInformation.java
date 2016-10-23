@@ -40,11 +40,15 @@ public final class SupplementalInformation implements JSONConvertible
 
     private final static Logger LOG = LoggerFactory.getLogger(SupplementalInformation.class);
 
-    private final Age age;
-    private final SubjectArea subjectArea;
-    private final GeographicalArea geographicalArea;
-    private final Frequency frequency;
-    private final Source source;
+    private Age age;
+    private SubjectArea subjectArea;
+    private GeographicalArea geographicalArea;
+    private Frequency frequency;
+    private Source source;
+
+    public SupplementalInformation()
+    {
+    }
 
     SupplementalInformation(Age age,
                             SubjectArea subjectArea,
