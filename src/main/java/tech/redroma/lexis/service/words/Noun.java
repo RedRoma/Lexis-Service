@@ -43,7 +43,7 @@ final class Noun extends WordType
     {
         super(Types.Noun);
     }
-    
+
     public Noun(Declension declension, Gender gender)
     {
         super(Types.Noun);
@@ -53,14 +53,34 @@ final class Noun extends WordType
         this.gender = gender;
     }
 
+    @Override
+    public JsonObject asJSON()
+    {
+        JsonObject object = super.asJSON();
+
+        if (gender != null)
+        {
+            String genderString = gender.toString();
+            object.addProperty(Keys.GENDER, genderString);
+        }
+
+        if (declension != null)
+        {
+            String declensionString = declension.toString();
+            object.addProperty(Keys.DECLENSION, declensionString);
+        }
+
+        return object;
+    }
+
     public static Noun fromJSON(JsonObject object)
     {
         checkThat(object).is(notNull());
 
         try
         {
-            String genderString = object.get("gender").getAsString();
-            String declensionString = object.get("declension").getAsString();
+            String genderString = object.get(Keys.GENDER).getAsString();
+            String declensionString = object.get(Keys.DECLENSION).getAsString();
 
             Gender gender = Gender.fromString(genderString);
             Declension declension = Declension.fromString(declensionString);
@@ -188,6 +208,13 @@ final class Noun extends WordType
 
             return declension;
         }
+    }
+
+    private static class Keys
+    {
+
+        static final String GENDER = "gender";
+        static final String DECLENSION = "declension";
     }
 
 }
