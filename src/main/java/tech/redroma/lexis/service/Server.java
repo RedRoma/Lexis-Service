@@ -69,6 +69,6 @@ public final class Server
             .withUrgency(Urgency.MEDIUM)
             .send();
               
-        return Words.JSON_FILE;
+        return Words.WORDS.stream().map(word -> word.asJSON());
     }
 }
