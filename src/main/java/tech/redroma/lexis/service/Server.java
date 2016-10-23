@@ -67,6 +67,8 @@ public final class Server
     {
         Spark.get("/", this::getAllWords);
         Spark.get("/search/starting-with/:searchTerm", this::getAllWordsStartingWith);
+        Spark.get("/search/containing/:searchTerm", this::getAllWordsContaining);
+        Spark.get("/search/containing-in-definition/:searchTerm", this::getAllWordsContainingInDefinition);
     }
 
     Object getAllWords(Request request, Response response)
