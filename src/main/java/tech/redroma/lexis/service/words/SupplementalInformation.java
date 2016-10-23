@@ -72,17 +72,35 @@ public final class SupplementalInformation implements JSONConvertible
     {
         JsonObject object = new JsonObject();
 
-        String ageString = age.toString();
-        String subjectAreaString = subjectArea.toString();
-        String geographyString = geographicalArea.toString();
-        String frequencyString = frequency.toString();
-        String sourceString = source.toString();
+        if (age != null)
+        {
+            String ageString = age.toString();
+            object.addProperty(Keys.AGE, ageString);
+        }
 
-        object.addProperty(Keys.AGE, ageString);
-        object.addProperty(Keys.SUBJECT_AREA, subjectAreaString);
-        object.addProperty(Keys.GEOGRAPHICAL_AREA, geographyString);
-        object.addProperty(Keys.SOURCE, sourceString);
-        object.addProperty(Keys.FREQUENCY, frequencyString);
+        if (subjectArea != null)
+        {
+            String subjectAreaString = subjectArea.toString();
+            object.addProperty(Keys.SUBJECT_AREA, subjectAreaString);
+        }
+
+        if (geographicalArea != null)
+        {
+            String geographyString = geographicalArea.toString();
+            object.addProperty(Keys.GEOGRAPHICAL_AREA, geographyString);
+        }
+
+        if (frequency != null)
+        {
+            String frequencyString = frequency.toString();
+            object.addProperty(Keys.FREQUENCY, frequencyString);
+        }
+
+        if (source != null)
+        {
+            String sourceString = source.toString();
+            object.addProperty(Keys.SOURCE, sourceString);
+        }
 
         return object;
     }
