@@ -16,6 +16,7 @@
 
 package tech.redroma.lexis.service.words;
 
+import com.google.gson.JsonObject;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
  * @author SirWellington
  */
 @Pojo
-public final class SupplementalInformation
+public final class SupplementalInformation implements JSONConvertible
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(SupplementalInformation.class);
@@ -60,6 +61,51 @@ public final class SupplementalInformation
         this.geographicalArea = geographicalArea;
         this.frequency = frequency;
         this.source = source;
+    }
+
+    @Override
+    public JsonObject asJSON()
+    {
+        JsonObject object = new JsonObject();
+
+        String ageString = age.toString();
+        String subjectAreaString = subjectArea.toString();
+        String geographyString = geographicalArea.toString();
+        String frequencyString = frequency.toString();
+        String sourceString = source.toString();
+
+        object.addProperty(Keys.AGE, ageString);
+        object.addProperty(Keys.SUBJECT_AREA, subjectAreaString);
+        object.addProperty(Keys.GEOGRAPHICAL_AREA, geographyString);
+        object.addProperty(Keys.SOURCE, sourceString);
+        object.addProperty(Keys.FREQUENCY, frequencyString);
+
+        return object;
+    }
+
+    static SupplementalInformation fromJSON(JsonObject object)
+    {
+        try
+        {
+            String ageString = object.get(Keys.AGE).getAsString();
+            String geographicalAreaString = object.get(Keys.GEOGRAPHICAL_AREA).getAsString();
+            String subjectAreaString = object.get(Keys.SUBJECT_AREA).getAsString();
+            String frequencyString = object.get(Keys.FREQUENCY).getAsString();
+            String sourceString = object.get(Keys.SOURCE).getAsString();
+
+            Age age = Age.fromString(ageString);
+            GeographicalArea geographicalArea = GeographicalArea.fromString(geographicalAreaString);
+            SubjectArea subjectArea = SubjectArea.fromString(subjectAreaString);
+            Frequency frequency = Frequency.fromString(frequencyString);
+            Source source = Source.fromString(sourceString);
+
+            return new SupplementalInformation(age, subjectArea, geographicalArea, frequency, source);
+        }
+        catch (Exception ex)
+        {
+            LOG.error("Failed to load Supplemental Information from {}", object);
+            return null;
+        }
     }
 
     public Age getAge()
@@ -142,6 +188,16 @@ public final class SupplementalInformation
     public String toString()
     {
         return "SupplementalInformation{" + "age=" + age + ", subjectArea=" + subjectArea + ", geographicalArea=" + geographicalArea + ", frequency=" + frequency + ", source=" + source + '}';
+    }
+
+    private static class Keys
+    {
+
+        static final String AGE = "age";
+        static final String SUBJECT_AREA = "subject_area";
+        static final String GEOGRAPHICAL_AREA = "geographical_area";
+        static final String FREQUENCY = "frequency";
+        static final String SOURCE = "source";
     }
 
 }

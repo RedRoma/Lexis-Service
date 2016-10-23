@@ -16,8 +16,12 @@
 
 package tech.redroma.lexis.service.words;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
@@ -30,7 +34,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
  * @author SirWellington
  */
 @Pojo
-public final class LexisWord
+public final class LexisWord implements JSONConvertible
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(LexisWord.class);
@@ -52,6 +56,36 @@ public final class LexisWord
         this.definitions = definitions;
         this.wordType = wordType;
         this.supplementalInformation = supplementalInformation;
+    }
+
+    @Override
+    public JsonObject asJSON()
+    {
+        JsonObject object = new JsonObject();
+        
+        Supplier<JsonArray> supplier = () -> new JsonArray();
+        BiConsumer<JsonArray, String> accumulator = (array, string) -> array.add(string);
+        BiConsumer<JsonArray, JsonArray> combiner = (first, second) -> first.addAll(second);
+        JsonArray formsArray = forms.stream().collect(supplier, accumulator, combiner);
+        
+        
+        JsonArray definitionsArray = new JsonArray();
+        
+        for (Definition definition : definitions)
+        {
+            JsonObject definitionObject = definition.asJSON();
+            definitionsArray.add(definitionObject);
+        }
+        
+        JsonObject wordTypeJson = wordType.asJSON();
+        JsonObject supplementalInformationJson = supplementalInformation.asJSON();
+        
+        object.add(Keys.WORD_TYPE, wordTypeJson);
+        object.add(Keys.FORMS, formsArray);
+        object.add(Keys.DEFINITIONS, definitionsArray);
+        object.add(Keys.SUPPLEMENTAL_INFORMATION, supplementalInformationJson);
+        
+        return object;
     }
 
     public List<String> getForms()
@@ -126,61 +160,13 @@ public final class LexisWord
         return "LexisWord{" + "forms=" + forms + ", definitions=" + definitions + ", wordType=" + wordType + ", supplementalInformation=" + supplementalInformation + '}';
     }
 
-    @Pojo
-    public static class Definition
+    
+    private static class Keys
     {
-
-        private final List<String> terms;
-
-        Definition(List<String> terms)
-        {
-            checkThat(terms).is(notNull());
-
-            this.terms = terms;
-        }
-
-        public List<String> getTerms()
-        {
-            return terms;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int hash = 3;
-            hash = 97 * hash + Objects.hashCode(this.terms);
-            return hash;
-        }
-
-        @Override
-        public boolean equals(Object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-            if (obj == null)
-            {
-                return false;
-            }
-            if (getClass() != obj.getClass())
-            {
-                return false;
-            }
-            final Definition other = (Definition) obj;
-            if (!Objects.equals(this.terms, other.terms))
-            {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public String toString()
-        {
-            return "Definition{" + "terms=" + terms + '}';
-        }
-
+        static final String DEFINITIONS = "definitions";
+        static final String SUPPLEMENTAL_INFORMATION = "supplemental_information";
+        static final String FORMS = "forms";
+        static final String WORD_TYPE = "word_ype";
     }
 
 }
