@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+import tech.aroma.client.Aroma;
+import tech.aroma.client.Urgency;
 
 /**
  *
@@ -30,10 +32,12 @@ public final class Server
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Server.class);
-
+    private final static Aroma AROMA = Aroma.create("de354716-b063-4b83-bdb4-ff9d05150563");
+    
     public static void main(String[] args)
     {
         final int port = 7777;
+        
         
         Server server = new Server();
         server.serveAtPort(port);
@@ -44,6 +48,11 @@ public final class Server
     {
         LOG.info("Starting server at {}");
         Spark.port(port);
+        
+        AROMA.begin()
+            .titled("Service Launched")
+            .withUrgency(Urgency.LOW)
+            .send();
     }
 
     void setupRoutes()
@@ -53,6 +62,14 @@ public final class Server
     
     Object getAllWords(Request request, Response response)
     {
+        LOG.info("Received request to get all words: {}", request);
+        
+        AROMA.begin().titled("Request Received")
+            .text("Received request to get all words.")
+            .withUrgency(Urgency.MEDIUM)
+            .send();
+              
+        
         return "";
     }
 }
