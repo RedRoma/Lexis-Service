@@ -39,7 +39,7 @@ final class Preposition extends WordType
 
     public Preposition(CaseType caseType)
     {
-        super("Preposition");
+        super(Types.Preposition);
         checkThat(caseType).is(notNull());
 
         this.caseType = caseType;

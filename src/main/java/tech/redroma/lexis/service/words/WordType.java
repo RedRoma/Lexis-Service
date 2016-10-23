@@ -21,8 +21,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
 
+import static tech.redroma.lexis.service.words.WordType.Types.Adjective;
+import static tech.redroma.lexis.service.words.WordType.Types.Adverb;
+import static tech.redroma.lexis.service.words.WordType.Types.Conjunction;
+import static tech.redroma.lexis.service.words.WordType.Types.Interjection;
+import static tech.redroma.lexis.service.words.WordType.Types.Numeral;
+import static tech.redroma.lexis.service.words.WordType.Types.PersonalPronoun;
+import static tech.redroma.lexis.service.words.WordType.Types.Pronoun;
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
  *
@@ -34,16 +41,24 @@ class WordType
 
     private final static Logger LOG = LoggerFactory.getLogger(WordType.class);
 
-    private final String wordType;
+    final static WordType ADJECTIVE = new WordType(Adjective);
+    final static WordType ADVERB = new WordType(Adverb);
+    final static WordType CONJUNCTION = new WordType(Conjunction);
+    final static WordType INTERJECTION = new WordType(Interjection);
+    final static WordType NUMERAL = new WordType(Numeral);
+    final static WordType PERSONAL_PRONOUN = new WordType(PersonalPronoun);
+    final static WordType PRONOUN = new WordType(Pronoun);
 
-    public WordType(String wordType)
+    private final Types wordType;
+
+    public WordType(Types wordType)
     {
-        checkThat(wordType).is(nonEmptyString());
+        checkThat(wordType).is(notNull());
 
         this.wordType = wordType;
     }
 
-    public String getWordType()
+    public Types getWordType()
     {
         return wordType;
     }
@@ -85,4 +100,20 @@ class WordType
         return "WordType{" + "wordType=" + wordType + '}';
     }
 
+    static enum Types
+    {
+        Adjective,
+        Adverb,
+        Conjunction,
+        Interjection,
+        Noun,
+        Numeral,
+        PersonalPronoun,
+        Preposition,
+        Pronoun,
+        Verb
+        ;
+        
+    }
+    
 }

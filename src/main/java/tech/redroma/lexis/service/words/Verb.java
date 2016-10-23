@@ -40,7 +40,7 @@ final class Verb extends WordType
 
     public Verb(Conjugation conjugation, Type verbType, String wordType)
     {
-        super("Verb");
+        super(Types.Verb);
         checkThat(conjugation, wordType)
             .are(notNull());
 

@@ -40,7 +40,7 @@ final class Noun extends WordType
 
     public Noun(Declension declension, Gender gender, String wordType)
     {
-        super("Noun");
+        super(Types.Noun);
         checkThat(declension, gender).are(notNull());
 
         this.declension = declension;
