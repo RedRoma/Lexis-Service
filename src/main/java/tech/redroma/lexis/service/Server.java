@@ -41,6 +41,8 @@ public final class Server
     private final static Logger LOG = LoggerFactory.getLogger(Server.class);
     final static Aroma AROMA = Aroma.create("de354716-b063-4b83-bdb4-ff9d05150563");
 
+    final static String APPLICATION_JSON = "application/json";
+
     public static void main(String[] args)
     {
         final int port = 7777;
@@ -70,7 +72,7 @@ public final class Server
     Object getAllWords(Request request, Response response)
     {
         LOG.info("Received request to get all words: {}", request);
-        response.type("application/json");
+        response.type(APPLICATION_JSON);
 
         List<LexisWord> words = Words.WORDS;
 
@@ -82,31 +84,32 @@ public final class Server
         List<JsonObject> allWords = words.stream()
             .map(word -> word.asJSON())
             .collect(toList());
-        
+
         return allWords;
     }
 
     Object getAllWordsStartingWith(Request request, Response response)
     {
         String term = request.params("searchTerm");
-        
+
         AROMA.begin().titled("Received Request")
-                .withUrgency(Urgency.MEDIUM)
-                .text("Getting all words starting with {}", term)
-                .send();
-        
+            .withUrgency(Urgency.MEDIUM)
+            .text("Getting all words starting with {}", term)
+            .send();
+
         if (Strings.isNullOrEmpty(term))
         {
             response.status(400);
             response.body("Search Term cannot be empty");
-            
+
             AROMA.begin().titled("Invalid Argument")
                 .withUrgency(Urgency.HIGH)
                 .text("Received empty search term")
                 .send();
-            
+
             return response;
         }
+        response.type(APPLICATION_JSON);
 
         LOG.info("Received request to get all words starting with: {}", term);
 
@@ -121,7 +124,7 @@ public final class Server
             .filter(filter)
             .map(word -> word.asJSON())
             .collect(toList());
-        
+
         long latency = System.currentTimeMillis() - start;
 
         LOG.info("Found {} words matching search term {}. Operation took {}ms", matches.size(), term, latency);
@@ -133,11 +136,11 @@ public final class Server
 
         return matches;
     }
-    
+
     Object getAllWordsContaining(Request request, Response response)
     {
         String term = request.params("searchTerm");
-        
+
         if (Strings.isNullOrEmpty(term))
         {
             LOG.warn("Missing search term");
@@ -146,26 +149,27 @@ public final class Server
                 .withUrgency(Urgency.HIGH)
                 .titled("Received request to search with missing search term")
                 .send();
-            
+
             return response;
         }
-        
+
         response.status(200);
-        
-        Predicate<LexisWord> filter = (word) -> 
+        response.type(APPLICATION_JSON);
+
+        Predicate<LexisWord> filter = (word) ->
         {
             return word.getForms().stream().anyMatch((form) -> form.contains(term));
         };
-        
+
         long begin = System.currentTimeMillis();
         List<JsonObject> results = Words.WORDS.parallelStream()
             .filter(filter)
             .map(word -> word.asJSON())
             .collect(toList());
         long latency = System.currentTimeMillis() - begin;
-        
+
         LOG.info("Found {} words containing {} in {}ms", results.size(), term, latency);
-        
+
         return results;
     }
 }
