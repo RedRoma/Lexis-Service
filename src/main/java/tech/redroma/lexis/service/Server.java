@@ -231,7 +231,7 @@ public final class Server
         response.status(200);
         response.type(APPLICATION_JSON);
         
-        LexisWord randomWord = randomWord();
+        LexisWord randomWord = getRandomWord();
         
         JsonObject json = randomWord.asJSON();
         long latency = System.currentTimeMillis() - start;
@@ -260,7 +260,7 @@ public final class Server
         return response;
     }
     
-    private LexisWord randomWord()
+    private LexisWord getRandomWord()
     {
         int size = Words.WORDS.size();
         int index = new Random().nextInt(size);
