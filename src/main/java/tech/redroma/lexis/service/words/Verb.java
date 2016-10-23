@@ -80,11 +80,17 @@ final class Verb extends WordType
     {
         JsonObject object = super.asJSON();
 
-        String conjugationString = conjugation.toString();
-        String verbTypeString = verbType.toString();
+        if (conjugation != null)
+        {
+            String conjugationString = conjugation.toString();
+            object.addProperty("conjugation", conjugationString);
+        }
 
-        object.addProperty("conjugation", conjugationString);
-        object.addProperty("verbType", verbTypeString);
+        if (verbType != null)
+        {
+            String verbTypeString = verbType.toString();
+            object.addProperty("verbType", verbTypeString);
+        }
 
         return object;
     }
