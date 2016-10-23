@@ -99,16 +99,9 @@ public final class Server
 
         if (Strings.isNullOrEmpty(term))
         {
-            response.status(400);
-            response.body("Search Term cannot be empty");
-
-            AROMA.begin().titled("Invalid Argument")
-                .withUrgency(Urgency.HIGH)
-                .text("Received empty search term")
-                .send();
-
-            return response;
+            return missingSearchTerm(response);
         }
+        
         response.type(APPLICATION_JSON);
 
         LOG.info("Received request to get all words starting with: {}", term);
@@ -131,7 +124,7 @@ public final class Server
 
         AROMA.begin().titled("Searched Words")
             .withUrgency(Urgency.LOW)
-            .text("Found {} words starting with {} in {}ms", matches.size(), term, latency)
+            .text("Found {} words starting with '{}' in {}ms", matches.size(), term, latency)
             .send();
 
         return matches;
@@ -143,14 +136,7 @@ public final class Server
 
         if (Strings.isNullOrEmpty(term))
         {
-            LOG.warn("Missing search term");
-            response.status(400);
-            AROMA.begin().titled("Invalid Request")
-                .withUrgency(Urgency.HIGH)
-                .titled("Received request to search with missing search term")
-                .send();
-
-            return response;
+            return missingSearchTerm(response);
         }
 
         response.status(200);
@@ -168,8 +154,62 @@ public final class Server
             .collect(toList());
         long latency = System.currentTimeMillis() - begin;
 
-        LOG.info("Found {} words containing {} in {}ms", results.size(), term, latency);
+        LOG.info("Found {} words containing '{}' in {}ms", results.size(), term, latency);
+        AROMA.begin().titled("Searched Words")
+            .withUrgency(Urgency.LOW)
+            .text("Found {} words starting with '{}' in {}ms", results.size(), term, latency)
+            .send();
 
         return results;
+    }
+    
+    Object getAllWordsContainingInDefinition(Request request, Response response)
+    {
+        String term = request.params("searchTerm");
+        
+        if(Strings.isNullOrEmpty(term))
+        {
+            return missingSearchTerm(response);
+        }
+        
+        response.status(200);
+        
+        Predicate<LexisWord> filter = (word) ->
+        {
+            return word.getDefinitions()
+                .stream()
+                .flatMap(def -> def.getTerms().stream())
+                .anyMatch(def -> def.contains(term));
+        };
+        
+        long start = System.currentTimeMillis();
+        List<JsonObject> results = Words.WORDS.parallelStream()
+            .filter(filter)
+            .map((word) -> word.asJSON())
+            .collect(toList());
+        long latency = System.currentTimeMillis() - start;
+
+        LOG.info("Found {} words with term '{}' in definition in {}ms", results.size(), term, latency);
+        AROMA.begin().titled("Searched Words")
+            .withUrgency(Urgency.LOW)
+            .text("Found {} words starting with '{}' in {}ms", results.size(), term, latency)
+            .send();
+
+        return results;
+    }
+
+    private Response missingSearchTerm(Response response)
+    {
+        LOG.warn("Missing search term");
+        
+        AROMA.begin().titled("Invalid Request")
+            .withUrgency(Urgency.HIGH)
+            .titled("Received request to search with missing search term")
+            .send();
+        
+        response.status(400);
+        response.body("Search Term cannot be empty");
+        
+        return response;
     }
 }
