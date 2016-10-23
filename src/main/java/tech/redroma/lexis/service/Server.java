@@ -32,7 +32,7 @@ public final class Server
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Server.class);
-    private final static Aroma AROMA = Aroma.create("de354716-b063-4b83-bdb4-ff9d05150563");
+    final static Aroma AROMA = Aroma.create("de354716-b063-4b83-bdb4-ff9d05150563");
     
     public static void main(String[] args)
     {
@@ -69,7 +69,6 @@ public final class Server
             .withUrgency(Urgency.MEDIUM)
             .send();
               
-        
-        return "";
+        return Words.JSON_FILE;
     }
 }
