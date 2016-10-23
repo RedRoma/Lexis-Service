@@ -19,11 +19,16 @@ package tech.redroma.lexis.service;
 
 
 import com.google.common.io.Resources;
+import com.google.gson.JsonElement;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.collections.lists.Lists;
 import tech.aroma.client.Urgency;
+import tech.redroma.lexis.service.words.JSONConvertible;
+import tech.redroma.lexis.service.words.LexisWord;
 
 import static com.google.common.base.Charsets.UTF_8;
 
@@ -38,7 +43,9 @@ final class Words
     /**
      * The Lexis Database is read into this JSON file.
      */
-    final static String JSON_FILE = loadJSONFile();
+    final static String JSON_FILE = loadJSONFile(); 
+    
+    final static List<LexisWord> WORDS = loadLexisWords();
     
     private static String loadJSONFile()
     {
@@ -79,5 +86,32 @@ final class Words
             return "";
         }
         
+    }
+
+    private static List<LexisWord> loadLexisWords()
+    {
+        List<LexisWord> results = Lists.create();
+
+        JsonElement wordsJson = JSONConvertible.GSON.fromJson(JSON_FILE, JsonElement.class);
+
+        if (!wordsJson.isJsonArray())
+        {
+            return results;
+        }
+
+        for (JsonElement element : wordsJson.getAsJsonArray())
+        {
+            if (element.isJsonObject())
+            {
+                LexisWord word = LexisWord.fromJSON(element.getAsJsonObject());
+
+                if (word != null)
+                {
+                    results.add(word);
+                }
+            }
+        }
+
+        return results;
     }
 }
