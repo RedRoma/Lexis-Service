@@ -79,7 +79,10 @@ public final class Server
             .withUrgency(Urgency.MEDIUM)
             .send();
 
-        List<JsonObject> allWords = words.stream().map(word -> word.asJSON()).collect(toList());
+        List<JsonObject> allWords = words.stream()
+            .map(word -> word.asJSON())
+            .collect(toList());
+        
         return allWords;
     }
 
@@ -114,16 +117,55 @@ public final class Server
         
         long start = System.currentTimeMillis();
 
-        List<LexisWord> matches = Words.WORDS.parallelStream().filter(filter).collect(toList());
+        List<JsonObject> matches = Words.WORDS.parallelStream()
+            .filter(filter)
+            .map(word -> word.asJSON())
+            .collect(toList());
+        
         long latency = System.currentTimeMillis() - start;
 
         LOG.info("Found {} words matching search term {}. Operation took {}ms", matches.size(), term, latency);
 
         AROMA.begin().titled("Searched Words")
             .withUrgency(Urgency.LOW)
-            .text("Found {} words startin with {} in {}ms", matches.size(), term, latency)
+            .text("Found {} words starting with {} in {}ms", matches.size(), term, latency)
             .send();
 
         return matches;
+    }
+    
+    Object getAllWordsContaining(Request request, Response response)
+    {
+        String term = request.params("searchTerm");
+        
+        if (Strings.isNullOrEmpty(term))
+        {
+            LOG.warn("Missing search term");
+            response.status(400);
+            AROMA.begin().titled("Invalid Request")
+                .withUrgency(Urgency.HIGH)
+                .titled("Received request to search with missing search term")
+                .send();
+            
+            return response;
+        }
+        
+        response.status(200);
+        
+        Predicate<LexisWord> filter = (word) -> 
+        {
+            return word.getForms().stream().anyMatch((form) -> form.contains(term));
+        };
+        
+        long begin = System.currentTimeMillis();
+        List<JsonObject> results = Words.WORDS.parallelStream()
+            .filter(filter)
+            .map(word -> word.asJSON())
+            .collect(toList());
+        long latency = System.currentTimeMillis() - begin;
+        
+        LOG.info("Found {} words containing {} in {}ms", results.size(), term, latency);
+        
+        return results;
     }
 }
