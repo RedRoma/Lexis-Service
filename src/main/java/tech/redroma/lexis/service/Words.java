@@ -31,11 +31,14 @@ import static com.google.common.base.Charsets.UTF_8;
  *
  * @author SirWellington
  */
-class Words 
+final class Words 
 {
     private final static Logger LOG = LoggerFactory.getLogger(Words.class);
 
-    static String JSON_FILE = loadJSONFile();
+    /**
+     * The Lexis Database is read into this JSON file.
+     */
+    final static String JSON_FILE = loadJSONFile();
     
     private static String loadJSONFile()
     {
