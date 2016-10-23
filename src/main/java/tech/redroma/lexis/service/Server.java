@@ -111,16 +111,19 @@ public final class Server
         {
             return word.getForms().stream().anyMatch((form) -> form.startsWith(term));
         };
+        
+        long start = System.currentTimeMillis();
 
         List<LexisWord> matches = Words.WORDS.parallelStream().filter(filter).collect(toList());
-        LOG.info("Found {} words matching search term {}", matches.size(), term);
-        
+        long latency = System.currentTimeMillis() - start;
+
+        LOG.info("Found {} words matching search term {}. Operation took {}ms", matches.size(), term, latency);
+
         AROMA.begin().titled("Searched Words")
             .withUrgency(Urgency.LOW)
-            .text("Found {} words startin with {}", matches.size(), term)
+            .text("Found {} words startin with {} in {}ms", matches.size(), term, latency)
             .send();
-            
-        
+
         return matches;
     }
 }
