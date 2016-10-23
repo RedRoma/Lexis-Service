@@ -63,6 +63,7 @@ public final class Server
         
         AROMA.begin()
             .titled("Service Launched")
+            .text("Serving {} words", count)
             .withUrgency(Urgency.LOW)
             .send();
     }
