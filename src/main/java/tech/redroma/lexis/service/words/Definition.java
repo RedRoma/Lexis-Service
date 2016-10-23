@@ -40,41 +40,46 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
 @Pojo
 public class Definition implements JSONConvertible
 {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(Definition.class);
-    
-    private final List<String> terms;
-    
+
+    private List<String> terms;
+
+    public Definition()
+    {
+        terms = Lists.create();
+    }
+
     Definition(List<String> terms)
     {
         Arguments.checkThat(terms).is(Assertions.notNull());
         this.terms = terms;
     }
-    
+
     @Override
     public JsonObject asJSON()
     {
         JsonObject object = new JsonObject();
-        
+
         Supplier<JsonArray> supplier = () -> new JsonArray();
         BiConsumer<JsonArray, String> accumulator = (array, term) -> array.add(term);
         BiConsumer<JsonArray, JsonArray> combiner = (first, second) -> first.addAll(second);
-        
+
         JsonArray termsArray = terms.stream().collect(supplier, accumulator, combiner);
         object.add("terms", termsArray);
-        
+
         return object;
     }
-    
+
     static Definition fromJSON(JsonObject object)
     {
         checkThat(object).is(notNull());
-        
+
         try
         {
             JsonArray termsArray = object.getAsJsonArray("terms");
             List<String> terms = Lists.create();
-            
+
             for (JsonElement element : termsArray)
             {
                 if (element.isJsonPrimitive())
@@ -82,7 +87,7 @@ public class Definition implements JSONConvertible
                     terms.add(element.getAsString());
                 }
             }
-            
+
             return new Definition(terms);
         }
         catch (Exception ex)
@@ -90,14 +95,14 @@ public class Definition implements JSONConvertible
             LOG.error("Failed to decode Definition from {}", object, ex);
             return new Definition(Lists.emptyList());
         }
-        
+
     }
-    
+
     public List<String> getTerms()
     {
         return terms;
     }
-    
+
     @Override
     public int hashCode()
     {
@@ -105,7 +110,7 @@ public class Definition implements JSONConvertible
         hash = 97 * hash + Objects.hashCode(this.terms);
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object obj)
     {
@@ -128,11 +133,11 @@ public class Definition implements JSONConvertible
         }
         return true;
     }
-    
+
     @Override
     public String toString()
     {
         return "Definition{" + "terms=" + terms + '}';
     }
-    
+
 }

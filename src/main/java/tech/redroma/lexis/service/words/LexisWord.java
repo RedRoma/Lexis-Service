@@ -17,6 +17,7 @@
 package tech.redroma.lexis.service.words;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +25,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sir.wellington.alchemy.collections.lists.Lists;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
@@ -36,78 +38,145 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
 @Pojo
 public final class LexisWord implements JSONConvertible
 {
-
+    
     private final static Logger LOG = LoggerFactory.getLogger(LexisWord.class);
-
-    private final List<String> forms;
-    private final List<Definition> definitions;
-    private final WordType wordType;
-    private final SupplementalInformation supplementalInformation;
-
-    public LexisWord(List<String> forms, 
+    
+    private List<String> forms;
+    private List<Definition> definitions;
+    private WordType wordType;
+    private SupplementalInformation supplementalInformation;
+    
+    public LexisWord()
+    {
+    }
+    
+    public LexisWord(List<String> forms,
                      List<Definition> definitions,
                      WordType wordType,
                      SupplementalInformation supplementalInformation)
     {
         checkThat(forms, definitions, wordType, supplementalInformation)
             .are(notNull());
-
+        
         this.forms = forms;
         this.definitions = definitions;
         this.wordType = wordType;
         this.supplementalInformation = supplementalInformation;
     }
-
+    
     @Override
     public JsonObject asJSON()
     {
         JsonObject object = new JsonObject();
         
-        Supplier<JsonArray> supplier = () -> new JsonArray();
-        BiConsumer<JsonArray, String> accumulator = (array, string) -> array.add(string);
-        BiConsumer<JsonArray, JsonArray> combiner = (first, second) -> first.addAll(second);
-        JsonArray formsArray = forms.stream().collect(supplier, accumulator, combiner);
-        
-        
-        JsonArray definitionsArray = new JsonArray();
-        
-        for (Definition definition : definitions)
+        if (!Lists.isEmpty(forms))
         {
-            JsonObject definitionObject = definition.asJSON();
-            definitionsArray.add(definitionObject);
+            Supplier<JsonArray> supplier = () -> new JsonArray();
+            BiConsumer<JsonArray, String> accumulator = (array, string) -> array.add(string);
+            BiConsumer<JsonArray, JsonArray> combiner = (first, second) -> first.addAll(second);
+            JsonArray formsArray = forms.stream().collect(supplier, accumulator, combiner);
+            
+            object.add(Keys.FORMS, formsArray);
+            
         }
         
-        JsonObject wordTypeJson = wordType.asJSON();
-        JsonObject supplementalInformationJson = supplementalInformation.asJSON();
+        if (!Lists.isEmpty(definitions))
+        {
+            JsonArray definitionsArray = new JsonArray();
+            
+            for (Definition definition : definitions)
+            {
+                JsonObject definitionObject = definition.asJSON();
+                definitionsArray.add(definitionObject);
+            }
+            object.add(Keys.DEFINITIONS, definitionsArray);
+            
+        }
         
-        object.add(Keys.WORD_TYPE, wordTypeJson);
-        object.add(Keys.FORMS, formsArray);
-        object.add(Keys.DEFINITIONS, definitionsArray);
-        object.add(Keys.SUPPLEMENTAL_INFORMATION, supplementalInformationJson);
+        if (wordType != null)
+        {
+            JsonObject wordTypeJson = wordType.asJSON();
+            object.add(Keys.WORD_TYPE, wordTypeJson);
+        }
+        
+        if (supplementalInformation != null)
+        {
+            JsonObject supplementalInformationJson = supplementalInformation.asJSON();
+            object.add(Keys.SUPPLEMENTAL_INFORMATION, supplementalInformationJson);
+        }
         
         return object;
     }
+    
+    public static LexisWord fromJSON(JsonObject object)
+    {
+        checkThat(object).is(notNull());
+        
+        LexisWord word = new LexisWord();
+        
+        try
+        {
+            JsonArray formsArray = object.getAsJsonArray(Keys.FORMS);
+            List<String> forms = Lists.create();
+            
+            for (JsonElement element : formsArray)
+            {
+                if (element.isJsonPrimitive())
+                {
+                    forms.add(element.getAsString());
+                }
+            }
+            
+            word.forms = forms;
+            
+            JsonArray definitionsArray = object.getAsJsonArray(Keys.DEFINITIONS);
+            List<Definition> definitions = Lists.create();
+            
+            for(JsonElement element : definitionsArray)
+            {
+                if (element.isJsonObject())
+                {
+                    Definition definition = Definition.fromJSON(element.getAsJsonObject());
+                    definitions.add(definition);
+                }
+            }
+            word.definitions = definitions;
 
+            JsonObject wordTypeJson = object.getAsJsonObject(Keys.WORD_TYPE);
+            word.wordType = WordType.fromJSON(wordTypeJson);
+            
+            JsonObject supplementalInformationJson = object.getAsJsonObject(Keys.SUPPLEMENTAL_INFORMATION);
+            word.supplementalInformation = SupplementalInformation.fromJSON(supplementalInformationJson);
+            
+        }
+        catch (Exception ex)
+        {
+            LOG.error("Failed to parse Lexis Word from {}", object, ex);
+        }
+        
+        return word;
+    }
+    
     public List<String> getForms()
     {
         return forms;
     }
-
+    
     public List<Definition> getDefinitions()
     {
         return definitions;
     }
-
+    
     public WordType getWordType()
     {
         return wordType;
     }
-
+    
     public SupplementalInformation getSupplementalInformation()
     {
         return supplementalInformation;
     }
-
+    
     @Override
     public int hashCode()
     {
@@ -118,7 +187,7 @@ public final class LexisWord implements JSONConvertible
         hash = 97 * hash + Objects.hashCode(this.supplementalInformation);
         return hash;
     }
-
+    
     @Override
     public boolean equals(Object obj)
     {
@@ -153,20 +222,20 @@ public final class LexisWord implements JSONConvertible
         }
         return true;
     }
-
+    
     @Override
     public String toString()
     {
         return "LexisWord{" + "forms=" + forms + ", definitions=" + definitions + ", wordType=" + wordType + ", supplementalInformation=" + supplementalInformation + '}';
     }
-
     
     private static class Keys
     {
+        
         static final String DEFINITIONS = "definitions";
         static final String SUPPLEMENTAL_INFORMATION = "supplemental_information";
         static final String FORMS = "forms";
         static final String WORD_TYPE = "word_ype";
     }
-
+    
 }
