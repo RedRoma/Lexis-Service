@@ -74,6 +74,8 @@ public final class Server
     Object getAllWords(Request request, Response response)
     {
         LOG.info("Received request to get all words: {}", request);
+        long begin = System.currentTimeMillis();
+        
         response.type(APPLICATION_JSON);
 
         List<LexisWord> words = Words.WORDS;
@@ -86,6 +88,12 @@ public final class Server
         List<JsonObject> allWords = words.stream()
             .map(word -> word.asJSON())
             .collect(toList());
+
+        long latency = System.currentTimeMillis() - begin;
+        AROMA.begin().titled("Request Completed")
+            .text("Completed request to get all words. Operation took {}ms", latency)
+            .withUrgency(Urgency.MEDIUM)
+            .send();
 
         return allWords;
     }
