@@ -16,11 +16,13 @@
 
 package tech.redroma.lexis.service.words;
 
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 
 /**
@@ -33,9 +35,69 @@ final class Verb extends WordType
 
     private final static Logger LOG = LoggerFactory.getLogger(Verb.class);
 
-    public Verb(String wordType)
+    private final Conjugation conjugation;
+    private final Verb.Type verbType;
+
+    public Verb(Conjugation conjugation, Type verbType, String wordType)
     {
         super("Verb");
+        checkThat(conjugation, wordType)
+            .are(notNull());
+
+        this.conjugation = conjugation;
+        this.verbType = verbType;
+    }
+
+    public Conjugation getConjugation()
+    {
+        return conjugation;
+    }
+
+    public Type getVerbType()
+    {
+        return verbType;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 7;
+        hash = 41 * hash + Objects.hashCode(this.conjugation);
+        hash = 41 * hash + Objects.hashCode(this.verbType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final Verb other = (Verb) obj;
+        if (this.conjugation != other.conjugation)
+        {
+            return false;
+        }
+        if (this.verbType != other.verbType)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Verb{" + "conjugation=" + conjugation + ", verbType=" + verbType + '}';
     }
 
     /**
