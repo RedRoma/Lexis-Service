@@ -36,9 +36,14 @@ final class Verb extends WordType
 
     private final static Logger LOG = LoggerFactory.getLogger(Verb.class);
 
-    private final Conjugation conjugation;
-    private final Verb.Type verbType;
+    private Conjugation conjugation;
+    private Verb.Type verbType;
 
+    Verb()
+    {
+        super(Types.Verb);
+    }
+    
     public Verb(Conjugation conjugation, Type verbType)
     {
         super(Types.Verb);
@@ -139,7 +144,7 @@ final class Verb extends WordType
     /**
      * Represents a Verb's conjugation.
      */
-    static enum Conjugation
+    public static enum Conjugation
     {
         First,
         Second,
@@ -173,7 +178,7 @@ final class Verb extends WordType
 
     }
 
-    static enum Type
+    public static enum Type
     {
         Transitive,
         Intransitive,
