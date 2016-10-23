@@ -37,7 +37,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
  * @author SirWellington
  */
 @Pojo
-public class WordType
+public class WordType implements JSONConvertible
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(WordType.class);
@@ -57,6 +57,67 @@ public class WordType
         checkThat(wordType).is(notNull());
 
         this.wordType = wordType;
+    }
+
+    public static WordType fromJSON(JsonObject object)
+    {
+        checkThat(object).is(notNull());
+
+        try
+        {
+            JsonObject wordType = object.getAsJsonObject("wordType");
+
+            String wordTypeEnum = wordType.get("wordType").getAsString();
+
+            WordType.Types typeOfWord = WordType.Types.valueOf(wordTypeEnum);
+
+            switch (typeOfWord)
+            {
+                case Adjective: return ADJECTIVE;
+                case Adverb: return ADVERB;
+                case Conjunction: return CONJUNCTION;
+                case Interjection: return INTERJECTION;
+                case Numeral: return NUMERAL;
+                case PersonalPronoun: return PERSONAL_PRONOUN;
+                case Pronoun: return PRONOUN;
+            }
+
+            if (typeOfWord == Types.Noun)
+            {
+                return Noun.fromJSON(object);
+            }
+
+            if (typeOfWord == Types.Verb)
+            {
+                return Verb.fromJSON(object);
+            }
+
+            if (typeOfWord == Types.Preposition)
+            {
+                return Verb.fromJSON(object);
+            }
+
+            LOG.warn("Failed to determine the WordType from JSON: {}", object);
+
+            return null;
+
+        }
+        catch (Exception ex)
+        {
+            LOG.error("Failed to load as WordType: {}", object, ex);
+            return null;
+        }
+    }
+
+    @Override
+    public JsonObject asJSON()
+    {
+        JsonObject json = new JsonObject();
+
+        String wordTypeString = this.wordType.toString();
+        json.addProperty("wordType", wordTypeString);
+
+        return json;
     }
 
     public Types getWordType()
@@ -114,56 +175,6 @@ public class WordType
         Pronoun,
         Verb;
 
-    }
-
-    public static WordType fromJSON(JsonObject object)
-    {
-        checkThat(object).is(notNull());
-
-        try
-        {
-            JsonObject wordType = object.getAsJsonObject("wordType");
-
-            String wordTypeEnum = wordType.get("wordType").getAsString();
-
-            WordType.Types typeOfWord = WordType.Types.valueOf(wordTypeEnum);
-
-            switch (typeOfWord)
-            {
-                case Adjective: return ADJECTIVE;
-                case Adverb: return ADVERB;
-                case Conjunction: return CONJUNCTION;
-                case Interjection: return INTERJECTION;
-                case Numeral: return NUMERAL;
-                case PersonalPronoun: return PERSONAL_PRONOUN;
-                case Pronoun: return PRONOUN;
-            }
-
-            if (typeOfWord == Types.Noun)
-            {
-                return Noun.fromJSON(object);
-            }
-
-            if (typeOfWord == Types.Verb)
-            {
-                return Verb.fromJSON(object);
-            }
-
-            if (typeOfWord == Types.Preposition)
-            {
-                return Verb.fromJSON(object);
-            }
-
-            LOG.warn("Failed to determine the WordType from JSON: {}", object);
-
-            return null;
-
-        }
-        catch (Exception ex)
-        {
-            LOG.error("Failed to load as WordType: {}", object, ex);
-            return null;
-        }
     }
 
 }

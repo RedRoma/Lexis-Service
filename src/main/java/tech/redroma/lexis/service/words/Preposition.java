@@ -33,28 +33,28 @@ import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.n
 @Pojo
 final class Preposition extends WordType
 {
-
+    
     private final static Logger LOG = LoggerFactory.getLogger(Preposition.class);
-
+    
     private final CaseType caseType;
-
+    
     public Preposition(CaseType caseType)
     {
         super(Types.Preposition);
         checkThat(caseType).is(notNull());
-
+        
         this.caseType = caseType;
     }
-
+    
     public static Preposition fromJSON(JsonObject object)
     {
         checkThat(object).is(notNull());
-
+        
         try
         {
             String caseTypeString = object.get("caseType").getAsString();
             CaseType caseType = CaseType.fromString(caseTypeString);
-
+            
             return new Preposition(caseType);
         }
         catch (Exception ex)
@@ -63,12 +63,23 @@ final class Preposition extends WordType
             return null;
         }
     }
-
+    
+    @Override
+    public JsonObject asJSON()
+    {
+        JsonObject object = super.asJSON();
+        
+        String caseTypeString = caseType.toString();
+        object.addProperty("caseType", caseTypeString);
+        
+        return object;
+    }
+    
     public CaseType getCaseType()
     {
         return caseType;
     }
-
+    
     @Override
     public int hashCode()
     {
@@ -76,7 +87,7 @@ final class Preposition extends WordType
         hash = 17 * hash + Objects.hashCode(this.caseType);
         return hash;
     }
-
+    
     @Override
     public boolean equals(Object obj)
     {
@@ -99,13 +110,13 @@ final class Preposition extends WordType
         }
         return true;
     }
-
+    
     @Override
     public String toString()
     {
         return "Preposition{" + "caseType=" + caseType + '}';
     }
-
+    
     static enum CaseType
     {
         Nominative,
@@ -116,13 +127,13 @@ final class Preposition extends WordType
         Vocative,
         Locative,
         Unknown;
-
+        
         static CaseType fromString(String string)
         {
             checkThat(string).is(nonEmptyString());
-
+            
             CaseType caseType = null;
-
+            
             try
             {
                 caseType = CaseType.valueOf(string);
@@ -131,14 +142,14 @@ final class Preposition extends WordType
             {
                 LOG.warn("Failed to load CaseType from {}", string);
             }
-
+            
             if (caseType == null)
             {
                 caseType = CaseType.Unknown;
             }
-
+            
             return caseType;
         }
     }
-
+    
 }

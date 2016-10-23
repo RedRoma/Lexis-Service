@@ -48,19 +48,19 @@ final class Verb extends WordType
         this.conjugation = conjugation;
         this.verbType = verbType;
     }
-    
+
     public static Verb fromJSON(JsonObject object)
     {
         checkThat(object).is(notNull());
-        
+
         try
         {
             String conjugationString = object.get("conjugation").getAsString();
             String verbTypeString = object.get("verbType").getAsString();
-            
+
             Conjugation conjugation = Conjugation.fromString(conjugationString);
             Verb.Type verbType = Verb.Type.fromString(verbTypeString);
-            
+
             return new Verb(conjugation, verbType);
         }
         catch (Exception ex)
@@ -68,6 +68,20 @@ final class Verb extends WordType
             LOG.error("Failed to decode Verb from JSON: {}", object, ex);
             return null;
         }
+    }
+
+    @Override
+    public JsonObject asJSON()
+    {
+        JsonObject object = super.asJSON();
+
+        String conjugationString = conjugation.toString();
+        String verbTypeString = verbType.toString();
+
+        object.addProperty("conjugation", conjugationString);
+        object.addProperty("verbType", verbTypeString);
+
+        return object;
     }
 
     public Conjugation getConjugation()
