@@ -19,7 +19,7 @@ package tech.redroma.lexis.service;
 import com.google.common.base.Strings;
 import com.google.gson.JsonObject;
 import java.util.List;
-import java.util.Optional;
+import java.util.Random;
 import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,28 +231,18 @@ public final class Server
         response.status(200);
         response.type(APPLICATION_JSON);
         
-        Optional<LexisWord> any = Words.WORDS.stream().findAny();
+        LexisWord randomWord = randomWord();
         
-        if (!any.isPresent())
-        {
-            LOG.error("Failed to load any word.");
-            AROMA.begin().titled("Operation Failed")
-                .text("Could not load any word")
-                .send();
-            
-            return null;
-        }
-        
-        JsonObject word = any.get().asJSON();
+        JsonObject json = randomWord.asJSON();
         long latency = System.currentTimeMillis() - start;
 
-        LOG.debug("Operation to load any word turned up {} and took {}ms", word, latency);
+        LOG.debug("Operation to load any word turned up {} and took {}ms", json, latency);
         AROMA.begin().titled("Operation Completed")
-            .text("Operation to load any word turned up {} and took {}ms", word, latency)
+            .text("Operation to load any word turned up {} and took {}ms", json, latency)
             .withUrgency(Urgency.LOW)
             .send();
         
-        return  word;
+        return  json;
     }
 
     private Response missingSearchTerm(Response response)
@@ -268,5 +258,17 @@ public final class Server
         response.body("Search Term cannot be empty");
         
         return response;
+    }
+    
+    private LexisWord randomWord()
+    {
+        int size = Words.WORDS.size();
+        int index = new Random().nextInt(size);
+        if (index >= size)
+        {
+            index = size - 1;
+        }
+        
+        return Words.WORDS.get(index);
     }
 }
