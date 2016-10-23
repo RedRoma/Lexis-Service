@@ -16,6 +16,7 @@
 
 package tech.redroma.lexis.service.words;
 
+import com.google.gson.JsonObject;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,24 @@ final class Preposition extends WordType
         checkThat(caseType).is(notNull());
 
         this.caseType = caseType;
+    }
+
+    public static Preposition fromJSON(JsonObject object)
+    {
+        checkThat(object).is(notNull());
+
+        try
+        {
+            String caseTypeString = object.get("caseType").getAsString();
+            CaseType caseType = CaseType.fromString(caseTypeString);
+
+            return new Preposition(caseType);
+        }
+        catch (Exception ex)
+        {
+            LOG.error("Failed to decode Preposition from {}", object, ex);
+            return null;
+        }
     }
 
     public CaseType getCaseType()

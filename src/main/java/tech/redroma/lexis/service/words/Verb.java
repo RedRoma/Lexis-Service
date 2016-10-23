@@ -16,6 +16,7 @@
 
 package tech.redroma.lexis.service.words;
 
+import com.google.gson.JsonObject;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,14 +39,35 @@ final class Verb extends WordType
     private final Conjugation conjugation;
     private final Verb.Type verbType;
 
-    public Verb(Conjugation conjugation, Type verbType, String wordType)
+    public Verb(Conjugation conjugation, Type verbType)
     {
         super(Types.Verb);
-        checkThat(conjugation, wordType)
+        checkThat(conjugation, verbType)
             .are(notNull());
 
         this.conjugation = conjugation;
         this.verbType = verbType;
+    }
+    
+    public static Verb fromJSON(JsonObject object)
+    {
+        checkThat(object).is(notNull());
+        
+        try
+        {
+            String conjugationString = object.get("conjugation").getAsString();
+            String verbTypeString = object.get("verbType").getAsString();
+            
+            Conjugation conjugation = Conjugation.fromString(conjugationString);
+            Verb.Type verbType = Verb.Type.fromString(verbTypeString);
+            
+            return new Verb(conjugation, verbType);
+        }
+        catch (Exception ex)
+        {
+            LOG.error("Failed to decode Verb from JSON: {}", object, ex);
+            return null;
+        }
     }
 
     public Conjugation getConjugation()

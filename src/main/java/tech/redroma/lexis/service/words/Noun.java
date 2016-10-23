@@ -16,6 +16,7 @@
 
 package tech.redroma.lexis.service.words;
 
+import com.google.gson.JsonObject;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +39,34 @@ final class Noun extends WordType
     private final Declension declension;
     private final Gender gender;
 
-    public Noun(Declension declension, Gender gender, String wordType)
+    public Noun(Declension declension, Gender gender)
     {
         super(Types.Noun);
         checkThat(declension, gender).are(notNull());
 
         this.declension = declension;
         this.gender = gender;
+    }
+
+    public static Noun fromJSON(JsonObject object)
+    {
+        checkThat(object).is(notNull());
+
+        try
+        {
+            String genderString = object.get("gender").getAsString();
+            String declensionString = object.get("declension").getAsString();
+
+            Gender gender = Gender.fromString(genderString);
+            Declension declension = Declension.fromString(declensionString);
+
+            return new Noun(declension, gender);
+        }
+        catch (Exception ex)
+        {
+            LOG.error("Failed to load Noun from JSON: {}", object, ex);
+            return null;
+        }
     }
 
     public Declension getDeclension()

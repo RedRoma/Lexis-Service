@@ -16,6 +16,7 @@
 
 package tech.redroma.lexis.service.words;
 
+import com.google.gson.JsonObject;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +101,7 @@ public class WordType
         return "WordType{" + "wordType=" + wordType + '}';
     }
 
-    static enum Types
+    public static enum Types
     {
         Adjective,
         Adverb,
@@ -111,9 +112,58 @@ public class WordType
         PersonalPronoun,
         Preposition,
         Pronoun,
-        Verb
-        ;
-        
+        Verb;
+
     }
-    
+
+    public static WordType fromJSON(JsonObject object)
+    {
+        checkThat(object).is(notNull());
+
+        try
+        {
+            JsonObject wordType = object.getAsJsonObject("wordType");
+
+            String wordTypeEnum = wordType.get("wordType").getAsString();
+
+            WordType.Types typeOfWord = WordType.Types.valueOf(wordTypeEnum);
+
+            switch (typeOfWord)
+            {
+                case Adjective: return ADJECTIVE;
+                case Adverb: return ADVERB;
+                case Conjunction: return CONJUNCTION;
+                case Interjection: return INTERJECTION;
+                case Numeral: return NUMERAL;
+                case PersonalPronoun: return PERSONAL_PRONOUN;
+                case Pronoun: return PRONOUN;
+            }
+
+            if (typeOfWord == Types.Noun)
+            {
+                return Noun.fromJSON(object);
+            }
+
+            if (typeOfWord == Types.Verb)
+            {
+                return Verb.fromJSON(object);
+            }
+
+            if (typeOfWord == Types.Preposition)
+            {
+                return Verb.fromJSON(object);
+            }
+
+            LOG.warn("Failed to determine the WordType from JSON: {}", object);
+
+            return null;
+
+        }
+        catch (Exception ex)
+        {
+            LOG.error("Failed to load as WordType: {}", object, ex);
+            return null;
+        }
+    }
+
 }
