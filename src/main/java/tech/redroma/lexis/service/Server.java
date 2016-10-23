@@ -88,7 +88,7 @@ public final class Server
 
         List<LexisWord> words = Words.WORDS;
 
-        AROMA.begin().titled("Request Received")
+        AROMA.begin().titled("Received Request")
             .text("Received request to get all {} words.", words.size())
             .withUrgency(Urgency.MEDIUM)
             .send();
@@ -112,7 +112,7 @@ public final class Server
 
         AROMA.begin().titled("Received Request")
             .withUrgency(Urgency.MEDIUM)
-            .text("Getting all words starting with {}", term)
+            .text("Getting all words starting with '{}'", term)
             .send();
 
         if (Strings.isNullOrEmpty(term))
@@ -140,7 +140,7 @@ public final class Server
 
         LOG.info("Found {} words matching search term {}. Operation took {}ms", matches.size(), term, latency);
 
-        AROMA.begin().titled("Searched Words")
+        AROMA.begin().titled("Request Complete")
             .withUrgency(Urgency.LOW)
             .text("Found {} words starting with '{}' in {}ms", matches.size(), term, latency)
             .send();
@@ -156,6 +156,11 @@ public final class Server
         {
             return missingSearchTerm(response);
         }
+        
+        AROMA.begin().titled("Received Request")
+            .withUrgency(Urgency.MEDIUM)
+            .text("Getting all words containing '{}'", term)
+            .send();
 
         response.status(200);
         response.type(APPLICATION_JSON);
@@ -173,7 +178,8 @@ public final class Server
         long latency = System.currentTimeMillis() - begin;
 
         LOG.info("Found {} words containing '{}' in {}ms", results.size(), term, latency);
-        AROMA.begin().titled("Searched Words")
+        
+        AROMA.begin().titled("Request Complete")
             .withUrgency(Urgency.LOW)
             .text("Found {} words containing '{}' in {}ms", results.size(), term, latency)
             .send();
@@ -189,6 +195,11 @@ public final class Server
         {
             return missingSearchTerm(response);
         }
+        
+        AROMA.begin().titled("Received Request")
+            .withUrgency(Urgency.MEDIUM)
+            .text("Getting all words with '{}' in the definition", term)
+            .send();
         
         response.status(200);
         response.type(APPLICATION_JSON);
@@ -209,7 +220,7 @@ public final class Server
         long latency = System.currentTimeMillis() - start;
 
         LOG.info("Found {} words with term '{}' in definition in {}ms", results.size(), term, latency);
-        AROMA.begin().titled("Searched Words")
+        AROMA.begin().titled("Request Complete")
             .withUrgency(Urgency.LOW)
             .text("Found {} words with '{}' in definitions in {}ms", results.size(), term, latency)
             .send();
@@ -237,7 +248,7 @@ public final class Server
         long latency = System.currentTimeMillis() - start;
 
         LOG.debug("Operation to load any word turned up {} and took {}ms", json, latency);
-        AROMA.begin().titled("Operation Completed")
+        AROMA.begin().titled("Request Complete")
             .text("Operation to load any word turned up {} and took {}ms", json, latency)
             .withUrgency(Urgency.LOW)
             .send();
