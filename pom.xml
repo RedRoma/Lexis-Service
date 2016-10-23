@@ -25,11 +25,50 @@
         <url>git@github.com:RedRoma/Lexis-Service.git</url>
     </scm>
 
-    <inceptionYear>2015</inceptionYear>
+    <inceptionYear>2016</inceptionYear>
+    
+     <organization>
+        <name>RedRoma, Inc.</name>
+        <url>http://RedRoma.tech/</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <name>Wellington Moreno</name>
+            <email>wellington@redroma.tech</email>
+            <id>SirWellington</id>
+            <organizationUrl>https://github.com/RedRoma</organizationUrl>
+            <roles>
+                <role>owner</role>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
 
     <prerequisites>
         <maven>3.0.3</maven>
     </prerequisites>
+    
+        <!-- END OF POM METADATA -->
+
+    <properties>
+
+        <!--Java Compiler Properties-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+    </properties>
 
     <!-- END OF POM METADATA -->
 
