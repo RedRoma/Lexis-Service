@@ -16,7 +16,10 @@
 
 package tech.redroma.lexis.service;
 
+import com.google.common.base.Strings;
+import com.google.gson.JsonObject;
 import java.util.List;
+import java.util.function.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -25,6 +28,8 @@ import spark.Spark;
 import tech.aroma.client.Aroma;
 import tech.aroma.client.Urgency;
 import tech.redroma.lexis.service.words.LexisWord;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  *
@@ -59,6 +64,7 @@ public final class Server
     void setupRoutes()
     {
         Spark.get("/", this::getAllWords);
+        Spark.get("/search/starting-with/:searchTerm", this::getAllWordsStartingWith);
     }
 
     Object getAllWords(Request request, Response response)
@@ -73,6 +79,48 @@ public final class Server
             .withUrgency(Urgency.MEDIUM)
             .send();
 
-        return words.stream().map(word -> word.asJSON());
+        List<JsonObject> allWords = words.stream().map(word -> word.asJSON()).collect(toList());
+        return allWords;
+    }
+
+    Object getAllWordsStartingWith(Request request, Response response)
+    {
+        String term = request.params("searchTerm");
+        
+        AROMA.begin().titled("Received Request")
+                .withUrgency(Urgency.MEDIUM)
+                .text("Getting all words starting with {}", term)
+                .send();
+        
+        if (Strings.isNullOrEmpty(term))
+        {
+            response.status(400);
+            response.body("Search Term cannot be empty");
+            
+            AROMA.begin().titled("Invalid Argument")
+                .withUrgency(Urgency.HIGH)
+                .text("Received empty search term")
+                .send();
+            
+            return response;
+        }
+
+        LOG.info("Received request to get all words starting with: {}", term);
+
+        Predicate<LexisWord> filter = (LexisWord word) ->
+        {
+            return word.getForms().stream().anyMatch((form) -> form.startsWith(term));
+        };
+
+        List<LexisWord> matches = Words.WORDS.parallelStream().filter(filter).collect(toList());
+        LOG.info("Found {} words matching search term {}", matches.size(), term);
+        
+        AROMA.begin().titled("Searched Words")
+            .withUrgency(Urgency.LOW)
+            .text("Found {} words startin with {}", matches.size(), term)
+            .send();
+            
+        
+        return matches;
     }
 }
