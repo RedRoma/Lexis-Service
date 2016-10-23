@@ -16,6 +16,7 @@
 
 package tech.redroma.lexis.service;
 
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -23,6 +24,7 @@ import spark.Response;
 import spark.Spark;
 import tech.aroma.client.Aroma;
 import tech.aroma.client.Urgency;
+import tech.redroma.lexis.service.words.LexisWord;
 
 /**
  *
@@ -33,12 +35,11 @@ public final class Server
 
     private final static Logger LOG = LoggerFactory.getLogger(Server.class);
     final static Aroma AROMA = Aroma.create("de354716-b063-4b83-bdb4-ff9d05150563");
-    
+
     public static void main(String[] args)
     {
         final int port = 7777;
-        
-        
+
         Server server = new Server();
         server.serveAtPort(port);
         server.setupRoutes();
@@ -48,7 +49,7 @@ public final class Server
     {
         LOG.info("Starting server at {}");
         Spark.port(port);
-        
+
         AROMA.begin()
             .titled("Service Launched")
             .withUrgency(Urgency.LOW)
@@ -59,16 +60,19 @@ public final class Server
     {
         Spark.get("/", this::getAllWords);
     }
-    
+
     Object getAllWords(Request request, Response response)
     {
         LOG.info("Received request to get all words: {}", request);
-        
+        response.type("application/json");
+
+        List<LexisWord> words = Words.WORDS;
+
         AROMA.begin().titled("Request Received")
-            .text("Received request to get all words.")
+            .text("Received request to get all {} words.", words.size())
             .withUrgency(Urgency.MEDIUM)
             .send();
-              
-        return Words.WORDS.stream().map(word -> word.asJSON());
+
+        return words.stream().map(word -> word.asJSON());
     }
 }
