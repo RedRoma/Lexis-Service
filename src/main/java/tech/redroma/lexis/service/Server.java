@@ -14,24 +14,45 @@
  * limitations under the License.
  */
 
- 
 package tech.redroma.lexis.service;
-
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import spark.Request;
+import spark.Response;
+import spark.Spark;
 
 /**
  *
  * @author SirWellington
  */
-public final class Server 
+public final class Server
 {
+
     private final static Logger LOG = LoggerFactory.getLogger(Server.class);
 
-    
     public static void main(String[] args)
     {
-        LOG.info("Starter server");
+        final int port = 7777;
+        
+        Server server = new Server();
+        server.serveAtPort(port);
+        server.setupRoutes();
+    }
+
+    void serveAtPort(int port)
+    {
+        LOG.info("Starting server at {}");
+        Spark.port(port);
+    }
+
+    void setupRoutes()
+    {
+        Spark.get("/", this::getAllWords);
+    }
+    
+    Object getAllWords(Request request, Response response)
+    {
+        return "";
     }
 }
