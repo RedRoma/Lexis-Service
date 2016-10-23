@@ -34,17 +34,16 @@ import static org.junit.Assert.assertThat;
  */
 @Repeat(100)
 @RunWith(AlchemyTestRunner.class)
-public class VerbTest 
+public class VerbTest
 {
 
     @GeneratePojo
     private Verb instance;
-    
+
     @Before
     public void setUp() throws Exception
     {
     }
-
 
     public void testFromJSON()
     {
