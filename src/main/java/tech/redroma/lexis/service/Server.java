@@ -76,6 +76,7 @@ public final class Server
         LOG.info("Received request to get all words: {}", request);
         long begin = System.currentTimeMillis();
         
+        response.status(200);
         response.type(APPLICATION_JSON);
 
         List<LexisWord> words = Words.WORDS;
@@ -183,6 +184,7 @@ public final class Server
         }
         
         response.status(200);
+        response.type(APPLICATION_JSON);
         
         Predicate<LexisWord> filter = (word) ->
         {
