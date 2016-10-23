@@ -62,6 +62,31 @@ class SupplementalInformation
         this.source = source;
     }
 
+    public Age getAge()
+    {
+        return age;
+    }
+
+    public SubjectArea getSubjectArea()
+    {
+        return subjectArea;
+    }
+
+    public GeographicalArea getGeographicalArea()
+    {
+        return geographicalArea;
+    }
+
+    public Frequency getFrequency()
+    {
+        return frequency;
+    }
+
+    public Source getSource()
+    {
+        return source;
+    }
+
     @Override
     public int hashCode()
     {
