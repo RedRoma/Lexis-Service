@@ -16,11 +16,13 @@
 
 package tech.redroma.lexis.service.words;
 
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
 
 import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
 
 /**
@@ -33,9 +35,68 @@ final class Noun extends WordType
 
     private final static Logger LOG = LoggerFactory.getLogger(Noun.class);
 
-    public Noun(String wordType)
+    private final Declension declension;
+    private final Gender gender;
+
+    public Noun(Declension declension, Gender gender, String wordType)
     {
         super("Noun");
+        checkThat(declension, gender).are(notNull());
+
+        this.declension = declension;
+        this.gender = gender;
+    }
+
+    public Declension getDeclension()
+    {
+        return declension;
+    }
+
+    public Gender getGender()
+    {
+        return gender;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.declension);
+        hash = 37 * hash + Objects.hashCode(this.gender);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (getClass() != obj.getClass())
+        {
+            return false;
+        }
+        final Noun other = (Noun) obj;
+        if (this.declension != other.declension)
+        {
+            return false;
+        }
+        if (this.gender != other.gender)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Noun{" + "declension=" + declension + ", gender=" + gender + '}';
     }
 
     static enum Gender
