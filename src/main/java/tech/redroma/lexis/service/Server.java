@@ -51,12 +51,16 @@ public final class Server
         server.serveAtPort(port);
         server.setupRoutes();
     }
-
+    
     void serveAtPort(int port)
     {
         LOG.info("Starting server at {}");
         Spark.port(port);
-
+        
+        int count = Words.WORDS.size();
+        
+        LOG.info("Server Started; Serving {} words.", count);
+        
         AROMA.begin()
             .titled("Service Launched")
             .withUrgency(Urgency.LOW)
