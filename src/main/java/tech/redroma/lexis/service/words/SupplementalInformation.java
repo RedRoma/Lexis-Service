@@ -34,7 +34,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
  * @author SirWellington
  */
 @Pojo
-class SupplementalInformation
+public final class SupplementalInformation
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(SupplementalInformation.class);

@@ -36,7 +36,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
  * @author SirWellington
  */
 @Pojo
-class WordType
+public class WordType
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(WordType.class);

@@ -30,7 +30,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull
  * @author SirWellington
  */
 @Pojo
-class LexisWord
+public final class LexisWord
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(LexisWord.class);
@@ -40,7 +40,9 @@ class LexisWord
     private final WordType wordType;
     private final SupplementalInformation supplementalInformation;
 
-    public LexisWord(List<String> forms, List<Definition> definitions, WordType wordType,
+    public LexisWord(List<String> forms, 
+                     List<Definition> definitions,
+                     WordType wordType,
                      SupplementalInformation supplementalInformation)
     {
         checkThat(forms, definitions, wordType, supplementalInformation)
@@ -125,7 +127,7 @@ class LexisWord
     }
 
     @Pojo
-    static class Definition
+    public static class Definition
     {
 
         private final List<String> terms;

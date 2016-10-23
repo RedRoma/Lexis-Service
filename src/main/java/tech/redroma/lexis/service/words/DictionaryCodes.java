@@ -30,7 +30,7 @@ import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.n
  * @author SirWellington
  */
 @NonInstantiable
-final class DictionaryCodes
+public final class DictionaryCodes
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(DictionaryCodes.class);
