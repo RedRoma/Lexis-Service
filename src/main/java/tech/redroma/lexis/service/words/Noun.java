@@ -36,9 +36,14 @@ final class Noun extends WordType
 
     private final static Logger LOG = LoggerFactory.getLogger(Noun.class);
 
-    private final Declension declension;
-    private final Gender gender;
+    private Declension declension;
+    private Gender gender;
 
+    public Noun()
+    {
+        super(Types.Noun);
+    }
+    
     public Noun(Declension declension, Gender gender)
     {
         super(Types.Noun);
@@ -65,7 +70,7 @@ final class Noun extends WordType
         catch (Exception ex)
         {
             LOG.error("Failed to load Noun from JSON: {}", object, ex);
-            return null;
+            return new Noun();
         }
     }
 

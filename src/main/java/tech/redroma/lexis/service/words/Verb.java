@@ -43,7 +43,7 @@ final class Verb extends WordType
     {
         super(Types.Verb);
     }
-    
+
     public Verb(Conjugation conjugation, Type verbType)
     {
         super(Types.Verb);
@@ -71,7 +71,7 @@ final class Verb extends WordType
         catch (Exception ex)
         {
             LOG.error("Failed to decode Verb from JSON: {}", object, ex);
-            return null;
+            return new Verb();
         }
     }
 

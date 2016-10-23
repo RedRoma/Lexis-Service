@@ -36,7 +36,12 @@ final class Preposition extends WordType
     
     private final static Logger LOG = LoggerFactory.getLogger(Preposition.class);
     
-    private final CaseType caseType;
+    private CaseType caseType;
+
+    public Preposition()
+    {
+        super(Types.Preposition);
+    }
     
     public Preposition(CaseType caseType)
     {
@@ -60,7 +65,7 @@ final class Preposition extends WordType
         catch (Exception ex)
         {
             LOG.error("Failed to decode Preposition from {}", object, ex);
-            return null;
+            return new Preposition();
         }
     }
     

@@ -50,8 +50,13 @@ public class WordType implements JSONConvertible
     final static WordType PERSONAL_PRONOUN = new WordType(PersonalPronoun);
     final static WordType PRONOUN = new WordType(Pronoun);
 
-    private final Types wordType;
+    private Types wordType;
 
+    public WordType()
+    {
+        this.wordType = null;
+    }
+    
     public WordType(Types wordType)
     {
         checkThat(wordType).is(notNull());
@@ -65,13 +70,11 @@ public class WordType implements JSONConvertible
 
         try
         {
-            JsonObject wordType = object.getAsJsonObject("wordType");
+            String wordTypeEnum = object.get("wordType").getAsString();
 
-            String wordTypeEnum = wordType.get("wordType").getAsString();
+            WordType.Types wordType = WordType.Types.valueOf(wordTypeEnum);
 
-            WordType.Types typeOfWord = WordType.Types.valueOf(wordTypeEnum);
-
-            switch (typeOfWord)
+            switch (wordType)
             {
                 case Adjective: return ADJECTIVE;
                 case Adverb: return ADVERB;
@@ -82,19 +85,19 @@ public class WordType implements JSONConvertible
                 case Pronoun: return PRONOUN;
             }
 
-            if (typeOfWord == Types.Noun)
+            if (wordType == Types.Noun)
             {
                 return Noun.fromJSON(object);
             }
 
-            if (typeOfWord == Types.Verb)
+            if (wordType == Types.Verb)
             {
                 return Verb.fromJSON(object);
             }
 
-            if (typeOfWord == Types.Preposition)
+            if (wordType == Types.Preposition)
             {
-                return Verb.fromJSON(object);
+                return Preposition.fromJSON(object);
             }
 
             LOG.warn("Failed to determine the WordType from JSON: {}", object);
