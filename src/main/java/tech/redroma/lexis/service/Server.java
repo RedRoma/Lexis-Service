@@ -168,7 +168,7 @@ public final class Server
         LOG.info("Found {} words containing '{}' in {}ms", results.size(), term, latency);
         AROMA.begin().titled("Searched Words")
             .withUrgency(Urgency.LOW)
-            .text("Found {} words starting with '{}' in {}ms", results.size(), term, latency)
+            .text("Found {} words containing '{}' in {}ms", results.size(), term, latency)
             .send();
 
         return results;
@@ -204,7 +204,7 @@ public final class Server
         LOG.info("Found {} words with term '{}' in definition in {}ms", results.size(), term, latency);
         AROMA.begin().titled("Searched Words")
             .withUrgency(Urgency.LOW)
-            .text("Found {} words starting with '{}' in {}ms", results.size(), term, latency)
+            .text("Found {} words with '{}' in definitions in {}ms", results.size(), term, latency)
             .send();
 
         return results;
