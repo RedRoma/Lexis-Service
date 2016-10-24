@@ -112,7 +112,7 @@ public final class Server
 
         AROMA.begin().titled("Received Request")
             .withUrgency(Urgency.MEDIUM)
-            .text("Getting all words starting with '{}'", term)
+            .text("From [{}] To GET all words starting with '{}'", request.ip(), term)
             .send();
 
         if (Strings.isNullOrEmpty(term))
@@ -122,7 +122,7 @@ public final class Server
         
         response.type(APPLICATION_JSON);
 
-        LOG.info("Received request to get all words starting with: {}", term);
+        LOG.info("Received request from [{}] to get all words starting with: {}", request.ip(), term);
 
         Predicate<LexisWord> filter = (LexisWord word) ->
         {
@@ -159,9 +159,10 @@ public final class Server
         
         AROMA.begin().titled("Received Request")
             .withUrgency(Urgency.MEDIUM)
-            .text("Getting all words containing '{}'", term)
+            .text("From [{}] to GET all words containing '{}'", request.ip(), term)
             .send();
-
+        LOG.debug("Received request to get all words containing '{}' from IP [{}]", term, request.ip());
+        
         response.status(200);
         response.type(APPLICATION_JSON);
 
@@ -198,7 +199,7 @@ public final class Server
         
         AROMA.begin().titled("Received Request")
             .withUrgency(Urgency.MEDIUM)
-            .text("Getting all words with '{}' in the definition", term)
+            .text("From [{}] to GET all words with '{}' in the definition", request.ip(), term)
             .send();
         
         response.status(200);
@@ -235,7 +236,7 @@ public final class Server
         LOG.info("Received request to get any word from {}", ip);
         
         AROMA.begin().titled("Received Request")
-            .text("To get any word from IP [{}]", ip)
+            .text("From [{}] to GET any word.", ip)
             .withUrgency(Urgency.LOW)
             .send();
         
