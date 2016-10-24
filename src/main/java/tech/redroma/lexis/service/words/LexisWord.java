@@ -45,6 +45,7 @@ public final class LexisWord implements JSONConvertible
     private List<Definition> definitions;
     private WordType wordType;
     private SupplementalInformation supplementalInformation;
+    private JsonObject jsonForm;
     
     public LexisWord()
     {
@@ -67,6 +68,11 @@ public final class LexisWord implements JSONConvertible
     @Override
     public JsonObject asJSON()
     {
+        if (jsonForm != null)
+        {
+            return jsonForm;
+        }
+        
         JsonObject object = new JsonObject();
         
         if (!Lists.isEmpty(forms))
@@ -104,6 +110,8 @@ public final class LexisWord implements JSONConvertible
             JsonObject supplementalInformationJson = supplementalInformation.asJSON();
             object.add(Keys.SUPPLEMENTAL_INFORMATION, supplementalInformationJson);
         }
+        
+        this.jsonForm = object;
         
         return object;
     }

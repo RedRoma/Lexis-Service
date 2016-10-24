@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -72,6 +73,14 @@ public class LexisWordTest
     {
         String string = instance.toString();
         assertThat(string, not(isEmptyOrNullString()));
+    }
+    
+    @Test
+    public void testJSONCreatedOnlyOnce()
+    {
+        JsonObject first = instance.asJSON();
+        JsonObject second = instance.asJSON();
+        assertThat(second, sameInstance(first));
     }
 
 }
