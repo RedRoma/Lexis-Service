@@ -133,7 +133,7 @@ public final class Server
 
         List<JsonObject> matches = Words.WORDS.parallelStream()
             .filter(filter)
-            .map(word -> word.asJSON())
+            .map(LexisWord::asJSON)
             .collect(toList());
 
         long latency = System.currentTimeMillis() - start;
@@ -174,7 +174,7 @@ public final class Server
         long begin = System.currentTimeMillis();
         List<JsonObject> results = Words.WORDS.parallelStream()
             .filter(filter)
-            .map(word -> word.asJSON())
+            .map(LexisWord::asJSON)
             .collect(toList());
         long latency = System.currentTimeMillis() - begin;
 
@@ -216,7 +216,7 @@ public final class Server
         long start = System.currentTimeMillis();
         List<JsonObject> results = Words.WORDS.parallelStream()
             .filter(filter)
-            .map((word) -> word.asJSON())
+            .map(LexisWord::asJSON)
             .collect(toList());
         long latency = System.currentTimeMillis() - start;
 
