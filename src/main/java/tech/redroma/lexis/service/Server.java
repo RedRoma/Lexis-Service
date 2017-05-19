@@ -99,7 +99,7 @@ public final class Server
 
         long latency = System.currentTimeMillis() - begin;
         AROMA.begin().titled("Request Completed")
-            .text("Completed request to get all words. Operation took {}ms", latency)
+            .text("Completed request to get all words for IP [{}]. Operation took {}ms", request.ip(), latency)
             .withUrgency(Urgency.MEDIUM)
             .send();
 
@@ -142,7 +142,7 @@ public final class Server
 
         AROMA.begin().titled("Request Complete")
             .withUrgency(Urgency.LOW)
-            .text("Found {} words starting with '{}' in {}ms", matches.size(), term, latency)
+            .text("Found {} words starting with '{}' in {}ms for IP [{}]", matches.size(), term, latency, request.ip())
             .send();
 
         return matches;
@@ -182,7 +182,7 @@ public final class Server
         
         AROMA.begin().titled("Request Complete")
             .withUrgency(Urgency.LOW)
-            .text("Found {} words containing '{}' in {}ms", results.size(), term, latency)
+            .text("Found {} words containing '{}' in {}ms for IP [{}]", results.size(), term, latency, request.ip())
             .send();
 
         return results;
@@ -223,7 +223,7 @@ public final class Server
         LOG.info("Found {} words with term '{}' in definition in {}ms", results.size(), term, latency);
         AROMA.begin().titled("Request Complete")
             .withUrgency(Urgency.LOW)
-            .text("Found {} words with '{}' in definitions in {}ms", results.size(), term, latency)
+            .text("Found {} words with '{}' in definitions in {}ms for IP [{}]", results.size(), term, latency, request.ip())
             .send();
 
         return results;
@@ -250,7 +250,7 @@ public final class Server
 
         LOG.debug("Operation to load any word turned up {} and took {}ms", json, latency);
         AROMA.begin().titled("Request Complete")
-            .text("Operation to load any word turned up {} and took {}ms", json, latency)
+            .text("Operation to load any word turned up {} and took {}ms for IP [{}]", json, latency, ip)
             .withUrgency(Urgency.LOW)
             .send();
         
