@@ -38,7 +38,7 @@ public final class Server
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Server.class);
-    final static Aroma AROMA = Aroma.Factory.create("de354716-b063-4b83-bdb4-ff9d05150563");
+    final static Aroma AROMA = Aroma.Factory.create("0355e009-f92a-494f-bc1c-25bfbe901c7f");
 
     final static String APPLICATION_JSON = "application/json";
 
