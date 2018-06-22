@@ -23,10 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
 
-import static tech.redroma.lexis.service.words.WordType.Types.*;
-import static tech.redroma.lexis.service.words.WordType.Types.Noun;
-import static tech.redroma.lexis.service.words.WordType.Types.Preposition;
-import static tech.redroma.lexis.service.words.WordType.Types.Verb;
 import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
@@ -40,13 +36,13 @@ public class WordType implements JSONConvertible
 
     private final static Logger LOG = LoggerFactory.getLogger(WordType.class);
 
-    final static WordType ADJECTIVE = new WordType(Adjective);
-    final static WordType ADVERB = new WordType(Adverb);
-    final static WordType CONJUNCTION = new WordType(Conjunction);
-    final static WordType INTERJECTION = new WordType(Interjection);
-    final static WordType NUMERAL = new WordType(Numeral);
-    final static WordType PERSONAL_PRONOUN = new WordType(PersonalPronoun);
-    final static WordType PRONOUN = new WordType(Pronoun);
+    final static WordType ADJECTIVE = new WordType(Types.Adjective);
+    final static WordType ADVERB = new WordType(Types.Adverb);
+    final static WordType CONJUNCTION = new WordType(Types.Conjunction);
+    final static WordType INTERJECTION = new WordType(Types.Interjection);
+    final static WordType NUMERAL = new WordType(Types.Numeral);
+    final static WordType PERSONAL_PRONOUN = new WordType(Types.PersonalPronoun);
+    final static WordType PRONOUN = new WordType(Types.Pronoun);
 
     private Types wordType;
 
