@@ -53,7 +53,7 @@ public final class Server
 
     private void serveAtPort(int port)
     {
-        LOG.info("Starting server at {}");
+        LOG.info("Starting server at {}", port);
         Spark.port(port);
 
         int count = Words.WORDS.size();
