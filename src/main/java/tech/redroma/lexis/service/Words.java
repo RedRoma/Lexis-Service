@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
- 
+
 package tech.redroma.lexis.service;
 
 
-import com.google.common.io.Resources;
-import com.google.gson.JsonElement;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+
+import com.google.common.io.Resources;
+import com.google.gson.JsonElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sir.wellington.alchemy.collections.lists.Lists;
-import tech.aroma.client.Urgency;
+import tech.aroma.client.Priority;
 import tech.redroma.lexis.service.words.JSONConvertible;
 import tech.redroma.lexis.service.words.LexisWord;
 
@@ -36,23 +37,23 @@ import static com.google.common.base.Charsets.UTF_8;
  *
  * @author SirWellington
  */
-final class Words 
+final class Words
 {
     private final static Logger LOG = LoggerFactory.getLogger(Words.class);
 
     /**
      * The Lexis Database is read into this JSON file.
      */
-    final static String JSON_FILE = loadJSONFile(); 
-    
+    final static String JSON_FILE = loadJSONFile();
+
     final static List<LexisWord> WORDS = loadLexisWords();
-    
+
     private static String loadJSONFile()
     {
         String path = "LexisWords.pretty.json";
-        
+
         LOG.debug("Loading JSON at {}", path);
-        
+
         URL url;
         try
         {
@@ -61,31 +62,31 @@ final class Words
         catch (Exception ex)
         {
             LOG.error("Failed to load URL at {}", path, ex);
-            
+
             Server.AROMA.begin().titled("Operation Failed")
-                .text("Could not load file at path {}", path, ex)
-                .withUrgency(Urgency.HIGH)
+                .withBody("Could not load file at path {}", path, ex)
+                .withPriority(Priority.HIGH)
                 .send();
-            
+
             return "";
         }
-       
-        try 
+
+        try
         {
             return Resources.toString(url, UTF_8);
         }
         catch(IOException ex)
         {
             LOG.error("Failed to load URL at {}", url, ex);
-            
+
             Server.AROMA.begin().titled("Operation Faile")
-                .text("Could not load url {}", url, ex)
-                .withUrgency(Urgency.HIGH)
+                .withBody("Could not load url {}", url, ex)
+                .withPriority(Priority.HIGH)
                 .send();
-            
+
             return "";
         }
-        
+
     }
 
     private static List<LexisWord> loadLexisWords()

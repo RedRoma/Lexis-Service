@@ -16,31 +16,29 @@
 
 package tech.redroma.lexis.service;
 
-import com.google.common.base.Strings;
-import com.google.gson.JsonObject;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
+
+import com.google.common.base.Strings;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Request;
-import spark.Response;
-import spark.Spark;
+import spark.*;
 import tech.aroma.client.Aroma;
-import tech.aroma.client.Urgency;
+import tech.aroma.client.Priority;
 import tech.redroma.lexis.service.words.LexisWord;
 
 import static java.util.stream.Collectors.toList;
 
 /**
- *
  * @author SirWellington
  */
 public final class Server
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(Server.class);
-    final static Aroma AROMA = Aroma.create("de354716-b063-4b83-bdb4-ff9d05150563");
+    final static Aroma AROMA = Aroma.Factory.create("de354716-b063-4b83-bdb4-ff9d05150563");
 
     final static String APPLICATION_JSON = "application/json";
 
@@ -52,21 +50,21 @@ public final class Server
         server.serveAtPort(port);
         server.setupRoutes();
     }
-    
+
     void serveAtPort(int port)
     {
         LOG.info("Starting server at {}");
         Spark.port(port);
-        
+
         int count = Words.WORDS.size();
-        
+
         LOG.info("Server Started; Serving {} words.", count);
-        
+
         AROMA.begin()
-            .titled("Service Launched")
-            .text("Serving {} words", count)
-            .withUrgency(Urgency.LOW)
-            .send();
+             .titled("Service Launched")
+             .withBody("Serving {} words", count)
+             .withPriority(Priority.LOW)
+             .send();
     }
 
     void setupRoutes()
@@ -82,26 +80,26 @@ public final class Server
     {
         LOG.info("Received request to get all words: {}", request);
         long begin = System.currentTimeMillis();
-        
+
         response.status(200);
         response.type(APPLICATION_JSON);
 
         List<LexisWord> words = Words.WORDS;
 
         AROMA.begin().titled("Received Request")
-            .text("Received request to get all {} words.", words.size())
-            .withUrgency(Urgency.MEDIUM)
-            .send();
+             .withBody("Received request to get all {} words.", words.size())
+             .withPriority(Priority.MEDIUM)
+             .send();
 
         List<JsonObject> allWords = words.stream()
-            .map(word -> word.asJSON())
-            .collect(toList());
+                                         .map(word -> word.asJSON())
+                                         .collect(toList());
 
         long latency = System.currentTimeMillis() - begin;
         AROMA.begin().titled("Request Completed")
-            .text("Completed request to get all words for IP [{}]. Operation took {}ms", request.ip(), latency)
-            .withUrgency(Urgency.MEDIUM)
-            .send();
+             .withBody("Completed request to get all words for IP [{}]. Operation took {}ms", request.ip(), latency)
+             .withPriority(Priority.MEDIUM)
+             .send();
 
         return allWords;
     }
@@ -111,15 +109,15 @@ public final class Server
         String term = request.params("searchTerm");
 
         AROMA.begin().titled("Received Request")
-            .withUrgency(Urgency.MEDIUM)
-            .text("From [{}] To GET all words starting with '{}'", request.ip(), term)
-            .send();
+             .withPriority(Priority.MEDIUM)
+             .withBody("From [{}] To GET all words starting with '{}'", request.ip(), term)
+             .send();
 
         if (Strings.isNullOrEmpty(term))
         {
             return missingSearchTerm(response);
         }
-        
+
         response.type(APPLICATION_JSON);
 
         LOG.info("Received request from [{}] to get all words starting with: {}", request.ip(), term);
@@ -128,22 +126,22 @@ public final class Server
         {
             return word.getForms().stream().anyMatch((form) -> form.startsWith(term));
         };
-        
+
         long start = System.currentTimeMillis();
 
         List<JsonObject> matches = Words.WORDS.parallelStream()
-            .filter(filter)
-            .map(LexisWord::asJSON)
-            .collect(toList());
+                                              .filter(filter)
+                                              .map(LexisWord::asJSON)
+                                              .collect(toList());
 
         long latency = System.currentTimeMillis() - start;
 
         LOG.info("Found {} words matching search term {}. Operation took {}ms", matches.size(), term, latency);
 
         AROMA.begin().titled("Request Complete")
-            .withUrgency(Urgency.LOW)
-            .text("Found {} words starting with '{}' in {}ms for IP [{}]", matches.size(), term, latency, request.ip())
-            .send();
+             .withPriority(Priority.LOW)
+             .withBody("Found {} words starting with '{}' in {}ms for IP [{}]", matches.size(), term, latency, request.ip())
+             .send();
 
         return matches;
     }
@@ -156,13 +154,13 @@ public final class Server
         {
             return missingSearchTerm(response);
         }
-        
+
         AROMA.begin().titled("Received Request")
-            .withUrgency(Urgency.MEDIUM)
-            .text("From [{}] to GET all words containing '{}'", request.ip(), term)
-            .send();
+             .withPriority(Priority.MEDIUM)
+             .withBody("From [{}] to GET all words containing '{}'", request.ip(), term)
+             .send();
         LOG.debug("Received request to get all words containing '{}' from IP [{}]", term, request.ip());
-        
+
         response.status(200);
         response.type(APPLICATION_JSON);
 
@@ -173,105 +171,108 @@ public final class Server
 
         long begin = System.currentTimeMillis();
         List<JsonObject> results = Words.WORDS.parallelStream()
-            .filter(filter)
-            .map(LexisWord::asJSON)
-            .collect(toList());
+                                              .filter(filter)
+                                              .map(LexisWord::asJSON)
+                                              .collect(toList());
         long latency = System.currentTimeMillis() - begin;
 
         LOG.info("Found {} words containing '{}' in {}ms", results.size(), term, latency);
-        
+
         AROMA.begin().titled("Request Complete")
-            .withUrgency(Urgency.LOW)
-            .text("Found {} words containing '{}' in {}ms for IP [{}]", results.size(), term, latency, request.ip())
-            .send();
+             .withPriority(Priority.LOW)
+             .withBody("Found {} words containing '{}' in {}ms for IP [{}]", results.size(), term, latency, request.ip())
+             .send();
 
         return results;
     }
-    
+
     Object getAllWordsContainingInDefinition(Request request, Response response)
     {
         String term = request.params("searchTerm");
-        
-        if(Strings.isNullOrEmpty(term))
+
+        if (Strings.isNullOrEmpty(term))
         {
             return missingSearchTerm(response);
         }
-        
+
         AROMA.begin().titled("Received Request")
-            .withUrgency(Urgency.MEDIUM)
-            .text("From [{}] to GET all words with '{}' in the definition", request.ip(), term)
-            .send();
-        
+             .withPriority(Priority.MEDIUM)
+             .withBody("From [{}] to GET all words with '{}' in the definition", request.ip(), term)
+             .send();
+
         response.status(200);
         response.type(APPLICATION_JSON);
-        
+
         Predicate<LexisWord> filter = (word) ->
         {
             return word.getDefinitions()
-                .stream()
-                .flatMap(def -> def.getTerms().stream())
-                .anyMatch(def -> def.contains(term));
+                       .stream()
+                       .flatMap(def -> def.getTerms().stream())
+                       .anyMatch(def -> def.contains(term));
         };
-        
+
         long start = System.currentTimeMillis();
         List<JsonObject> results = Words.WORDS.parallelStream()
-            .filter(filter)
-            .map(LexisWord::asJSON)
-            .collect(toList());
+                                              .filter(filter)
+                                              .map(LexisWord::asJSON)
+                                              .collect(toList());
         long latency = System.currentTimeMillis() - start;
 
         LOG.info("Found {} words with term '{}' in definition in {}ms", results.size(), term, latency);
         AROMA.begin().titled("Request Complete")
-            .withUrgency(Urgency.LOW)
-            .text("Found {} words with '{}' in definitions in {}ms for IP [{}]", results.size(), term, latency, request.ip())
-            .send();
+             .withPriority(Priority.LOW)
+             .withBody("Found {} words with '{}' in definitions in {}ms for IP [{}]", results.size(), term, latency, request
+                     .ip())
+             .send();
 
         return results;
     }
-    
+
     Object getAnyWord(Request request, Response response)
     {
         long start = System.currentTimeMillis();
         String ip = request.ip();
         LOG.info("Received request to get any word from {}", ip);
-        
-        AROMA.begin().titled("Received Request")
-            .text("From [{}] to GET any word.", ip)
-            .withUrgency(Urgency.LOW)
-            .send();
-        
+
+        AROMA.begin()
+             .titled("Received Request")
+             .withBody("From [{}] to GET any word.", ip)
+             .withPriority(Priority.LOW)
+             .send();
+
         response.status(200);
         response.type(APPLICATION_JSON);
-        
+
         LexisWord randomWord = getRandomWord();
-        
+
         JsonObject json = randomWord.asJSON();
         long latency = System.currentTimeMillis() - start;
 
         LOG.debug("Operation to load any word turned up {} and took {}ms", json, latency);
+
         AROMA.begin().titled("Request Complete")
-            .text("Operation to load any word turned up {} and took {}ms for IP [{}]", json, latency, ip)
-            .withUrgency(Urgency.LOW)
-            .send();
-        
-        return  json;
+             .withBody("Operation to load any word turned up {} and took {}ms for IP [{}]", json, latency, ip)
+             .withPriority(Priority.LOW)
+             .send();
+
+        return json;
     }
 
     private Response missingSearchTerm(Response response)
     {
         LOG.warn("Missing search term");
-        
+
         AROMA.begin().titled("Invalid Request")
-            .withUrgency(Urgency.HIGH)
-            .titled("Received request to search with missing search term")
-            .send();
-        
+             .withPriority(Priority.HIGH)
+             .titled("Received request to search with missing search term")
+             .send();
+
         response.status(400);
         response.body("Search Term cannot be empty");
-        
+
         return response;
     }
-    
+
     private LexisWord getRandomWord()
     {
         int size = Words.WORDS.size();
@@ -280,7 +281,7 @@ public final class Server
         {
             index = size - 1;
         }
-        
+
         return Words.WORDS.get(index);
     }
 }

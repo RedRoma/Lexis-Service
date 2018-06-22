@@ -16,20 +16,15 @@
 
 package tech.redroma.lexis.service.words;
 
-import com.google.gson.JsonObject;
 import java.util.Objects;
+
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
 
-import static tech.redroma.lexis.service.words.WordType.Types.Adjective;
-import static tech.redroma.lexis.service.words.WordType.Types.Adverb;
-import static tech.redroma.lexis.service.words.WordType.Types.Conjunction;
-import static tech.redroma.lexis.service.words.WordType.Types.Interjection;
-import static tech.redroma.lexis.service.words.WordType.Types.Numeral;
-import static tech.redroma.lexis.service.words.WordType.Types.PersonalPronoun;
-import static tech.redroma.lexis.service.words.WordType.Types.Pronoun;
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.redroma.lexis.service.words.WordType.Types.*;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**
@@ -56,7 +51,7 @@ public class WordType implements JSONConvertible
     {
         this.wordType = null;
     }
-    
+
     public WordType(Types wordType)
     {
         checkThat(wordType).is(notNull());
