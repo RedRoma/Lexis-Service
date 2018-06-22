@@ -4,7 +4,7 @@
 
     <groupId>tech.redroma.lexis</groupId>
     <artifactId>lexis-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <packaging>jar</packaging>
 
@@ -26,7 +26,7 @@
     </scm>
 
     <inceptionYear>2016</inceptionYear>
-    
+
     <organization>
         <name>RedRoma, Inc.</name>
         <url>http://RedRoma.tech/</url>
@@ -57,7 +57,7 @@
     <prerequisites>
         <maven>3.0.3</maven>
     </prerequisites>
-    
+
     <distributionManagement>
 
         <snapshotRepository>
@@ -71,17 +71,17 @@
         </repository>
 
     </distributionManagement>
-    
+
     <repositories>
         <!--SNAPSHOT REPOSITORY-->
         <repository>
             <id>ossrh-snapshot</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </repository>
-        
+
     </repositories>
 
-    
+
     <!-- END OF POM METADATA -->
 
     <properties>
@@ -137,13 +137,13 @@
             <artifactId>alchemy-annotations</artifactId>
             <version>1.6</version>
         </dependency>
-        
+
         <dependency>
             <groupId>tech.sirwellington.alchemy</groupId>
             <artifactId>alchemy-arguments</artifactId>
             <version>1.5</version>
         </dependency>
-        
+
         <dependency>
             <groupId>tech.sirwellington.alchemy</groupId>
             <artifactId>alchemy-collections</artifactId>
@@ -167,14 +167,14 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.25</version>
         </dependency>
-        
+
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.1.11</version>
             <scope>runtime</scope>
         </dependency>
-        
+
         <!--=======================-->
         <!--GUICE-->
         <!--=======================-->
@@ -183,7 +183,7 @@
             <artifactId>guice</artifactId>
             <version>4.1.0</version>
         </dependency>
-        
+
         <!--Guice Decoration Library-->
         <dependency>
             <groupId>tech.sirwellington.decorice</groupId>
@@ -199,12 +199,12 @@
             <artifactId>spark-core</artifactId>
             <version>2.5.3</version>
         </dependency>
-    
+
     </dependencies>
 
 
     <build>
-        
+
         <finalName>${project.artifactId}</finalName>
 
         <plugins>
@@ -313,7 +313,7 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
             <!--DEPENDENCY PLUGIN-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -337,7 +337,7 @@
                     </execution>
                 </executions>
             </plugin>
-                
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -374,7 +374,7 @@
             </plugin>
 
         </plugins>
-        
+
     </build>
 
 </project>
