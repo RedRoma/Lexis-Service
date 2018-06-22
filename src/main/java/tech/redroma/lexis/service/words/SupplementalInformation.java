@@ -16,18 +16,15 @@
 
 package tech.redroma.lexis.service.words;
 
-import com.google.gson.JsonObject;
 import java.util.Objects;
+
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tech.redroma.lexis.service.words.DictionaryCodes.Age;
-import tech.redroma.lexis.service.words.DictionaryCodes.Frequency;
-import tech.redroma.lexis.service.words.DictionaryCodes.GeographicalArea;
-import tech.redroma.lexis.service.words.DictionaryCodes.Source;
-import tech.redroma.lexis.service.words.DictionaryCodes.SubjectArea;
+import tech.redroma.lexis.service.words.DictionaryCodes.*;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
 
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 
 /**

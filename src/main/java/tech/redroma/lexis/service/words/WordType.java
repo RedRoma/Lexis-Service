@@ -24,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.objects.Pojo;
 
 import static tech.redroma.lexis.service.words.WordType.Types.*;
+import static tech.redroma.lexis.service.words.WordType.Types.Noun;
+import static tech.redroma.lexis.service.words.WordType.Types.Preposition;
+import static tech.redroma.lexis.service.words.WordType.Types.Verb;
 import static tech.sirwellington.alchemy.arguments.Arguments.*;
 import static tech.sirwellington.alchemy.arguments.assertions.Assertions.notNull;
 

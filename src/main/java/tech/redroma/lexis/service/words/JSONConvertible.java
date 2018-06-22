@@ -17,9 +17,7 @@
 
 package tech.redroma.lexis.service.words;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 
 
 /**
@@ -27,10 +25,10 @@ import com.google.gson.JsonObject;
  * This interface represents an Object that can be converted to and from JSON.
  * @author SirWellington
  */
-public interface JSONConvertible 
+public interface JSONConvertible
 {
-    
+
     Gson GSON = new GsonBuilder().create();
-    
+
     JsonObject asJSON();
 }

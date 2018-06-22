@@ -20,15 +20,9 @@ import com.google.gson.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -37,12 +31,12 @@ import static org.junit.Assert.assertThat;
  */
 @Repeat(100)
 @RunWith(AlchemyTestRunner.class)
-public class LexisWordTest 
+public class LexisWordTest
 {
 
     @GeneratePojo
     private LexisWord instance;
-    
+
     @Before
     public void setUp() throws Exception
     {
@@ -74,7 +68,7 @@ public class LexisWordTest
         String string = instance.toString();
         assertThat(string, not(isEmptyOrNullString()));
     }
-    
+
     @Test
     public void testJSONCreatedOnlyOnce()
     {

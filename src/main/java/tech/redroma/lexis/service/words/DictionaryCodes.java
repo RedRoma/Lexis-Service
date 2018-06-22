@@ -21,12 +21,12 @@ import org.slf4j.LoggerFactory;
 import tech.sirwellington.alchemy.annotations.access.NonInstantiable;
 import tech.sirwellington.alchemy.annotations.arguments.NonEmpty;
 
-import static tech.sirwellington.alchemy.arguments.Arguments.checkThat;
-import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.nonEmptyString;
+import static tech.sirwellington.alchemy.arguments.Arguments.*;
+import static tech.sirwellington.alchemy.arguments.assertions.StringAssertions.*;
 
 /**
  * Dictionary Codes are used to convey additional information about a Latin Word.
- * 
+ *
  * @author SirWellington
  */
 @NonInstantiable
@@ -34,10 +34,10 @@ public final class DictionaryCodes
 {
 
     private final static Logger LOG = LoggerFactory.getLogger(DictionaryCodes.class);
-    
+
     private DictionaryCodes()
     {
-        
+
     }
 
     /**

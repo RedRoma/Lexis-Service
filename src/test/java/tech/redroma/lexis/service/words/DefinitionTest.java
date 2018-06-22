@@ -20,12 +20,11 @@ import com.google.gson.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  *
@@ -33,12 +32,12 @@ import static org.junit.Assert.*;
  */
 @Repeat(100)
 @RunWith(AlchemyTestRunner.class)
-public class DefinitionTest 
+public class DefinitionTest
 {
 
     @GeneratePojo
     private Definition instance;
-    
+
     @Before
     public void setUp() throws Exception
     {

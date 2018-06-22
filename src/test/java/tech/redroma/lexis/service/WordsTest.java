@@ -22,20 +22,20 @@ import org.junit.runner.RunWith;
 import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
 
 /**
  *
  * @author SirWellington
  */
 @RunWith(AlchemyTestRunner.class)
-public class WordsTest 
+public class WordsTest
 {
 
     @Before
     public void setUp() throws Exception
     {
-        
+
     }
 
     @Test

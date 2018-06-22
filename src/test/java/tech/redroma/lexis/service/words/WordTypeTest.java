@@ -20,9 +20,7 @@ import com.google.gson.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import tech.sirwellington.alchemy.test.junit.runners.AlchemyTestRunner;
-import tech.sirwellington.alchemy.test.junit.runners.GeneratePojo;
-import tech.sirwellington.alchemy.test.junit.runners.Repeat;
+import tech.sirwellington.alchemy.test.junit.runners.*;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -34,9 +32,9 @@ import static org.junit.Assert.assertThat;
  */
 @Repeat(100)
 @RunWith(AlchemyTestRunner.class)
-public class WordTypeTest 
+public class WordTypeTest
 {
-    
+
     @GeneratePojo
     private WordType instance;
 
