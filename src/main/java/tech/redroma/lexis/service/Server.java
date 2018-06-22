@@ -40,7 +40,7 @@ public final class Server
     private final static Logger LOG = LoggerFactory.getLogger(Server.class);
     final static Aroma AROMA = Aroma.Factory.create("0355e009-f92a-494f-bc1c-25bfbe901c7f");
 
-    final static String APPLICATION_JSON = "application/json";
+    private final static String APPLICATION_JSON = "application/json";
 
     public static void main(String[] args)
     {
@@ -51,7 +51,7 @@ public final class Server
         server.setupRoutes();
     }
 
-    void serveAtPort(int port)
+    private void serveAtPort(int port)
     {
         LOG.info("Starting server at {}");
         Spark.port(port);
